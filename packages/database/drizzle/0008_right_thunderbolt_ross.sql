@@ -1,0 +1,1 @@
+ALTER TABLE "forms" DROP COLUMN "is_published";
