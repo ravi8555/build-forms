@@ -20,14 +20,33 @@ const openApiDocument = generateOpenApiDocument(serverRouter, {
   baseUrl: env.BASE_URL.concat("/api"),
 });
 
-// if (env.NODE_ENV !== "prod") {
-  app.use(
-    cors({
-      origin: "http://localhost:3030",
-      credentials:true
-    }),
-  );
-// }
+// // if (env.NODE_ENV !== "prod") {
+//   app.use(
+//     cors({
+//       origin: "http://localhost:3030",
+//       credentials:true
+//     }),
+//   );
+// // }
+
+const allowedOrigins = [
+  "http://localhost:3030",
+  "https://buildforms.in",
+  "https://www.buildforms.in",
+];
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
+);
 
 app.use(cookieParser())
 
