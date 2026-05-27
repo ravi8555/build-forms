@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
 
       <div className="relative hidden lg:block">
         <img
-          src="/forgot-password.png"
+          src="/forgot-password.png" 
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover"
         />

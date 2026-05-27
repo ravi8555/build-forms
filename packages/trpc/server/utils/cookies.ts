@@ -84,12 +84,20 @@ const ONE_YEAR = 12 * ONE_MONTH;
 
 const isProduction = process.env.NODE_ENV === "production";
 
+// const defaultCookieOption: CookieOptions = {
+//   path: "/",
+//   httpOnly: true,
+//   secure: isProduction,
+//   sameSite: isProduction ? "none" : "lax",
+//   domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
+//   maxAge: ONE_YEAR,
+// };
+
 const defaultCookieOption: CookieOptions = {
   path: "/",
   httpOnly: true,
   secure: isProduction,
   sameSite: isProduction ? "none" : "lax",
-  domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
   maxAge: ONE_YEAR,
 };
 

@@ -2,19 +2,16 @@
 
 import { ResetPasswordForm } from "~/components/reset-password-form"
 import { GalleryVerticalEndIcon } from "lucide-react"
+import Footer from "~/components/Footer"
+import Header from "~/components/Header"
 
 export default function ResetPasswordPage() {
   return (
+     <>
+    <Header />
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <a href="/" className="flex items-center gap-2 font-medium">
-            <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <GalleryVerticalEndIcon className="size-4" />
-            </div>
-            BuildForms
-          </a>
-        </div>
+        
 
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-sm">
@@ -23,13 +20,15 @@ export default function ResetPasswordPage() {
         </div>
       </div>
 
-      <div className="relative hidden bg-muted lg:block">
+      <div className="relative hidden lg:block">
         <img
-          src="/placeholder.svg"
+          src="/forgot-password.png"
           alt="Reset Password"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2]"
+          className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
     </div>
+     <Footer />
+    </>
   )
 }
