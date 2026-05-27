@@ -1,5 +1,5 @@
 "use client"
-
+import { Suspense } from "react"
 import { useForm } from "react-hook-form"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
@@ -20,7 +20,7 @@ type ResetPasswordFormData = {
   confirmPassword: string
 }
 
-export function ResetPasswordForm({
+export function ResetPasswordFormContent({
   className,
   ...props
 }: React.ComponentProps<"form">) {
@@ -138,5 +138,14 @@ export function ResetPasswordForm({
         </p>
       </FieldGroup>
     </form>
+  )
+}
+
+export function ResetPasswordForm(){
+  return(
+
+    <Suspense fallback={<div>Loading...</div>}>
+    <ResetPasswordFormContent />
+  </Suspense>
   )
 }

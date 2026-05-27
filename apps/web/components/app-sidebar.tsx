@@ -176,12 +176,12 @@ const handleLogout = async () => {
       <SidebarContent>
         <NavMain items={data.navMain} />
         {/* <NavDocuments items={data.documents} /> */}
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
-        <SidebarMenuButton>
+        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+        <SidebarMenuButton onClick={handleLogout}>
           <LogOut />
-          <a onClick={handleLogout}>
+          <span >
               Logout
-            </a>
+            </span>
         </SidebarMenuButton>
             
       </SidebarContent>

@@ -1,10 +1,10 @@
 "use client"
-
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { MailCheck } from "lucide-react"
 
-export default function VerifyEmailSentPage() {
+export function VerifyEmailSentPageContent() {
   const searchParams = useSearchParams()
   const email = searchParams.get("email")
 
@@ -49,4 +49,14 @@ export default function VerifyEmailSentPage() {
       </div>
     </div>
   )
+}
+
+export default function VerifyEmailSentPage(){
+  return(
+
+    <Suspense fallback={<div>Loading...</div>}>
+    <VerifyEmailSentPageContent />
+  </Suspense>
+  )
+
 }
