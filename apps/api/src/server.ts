@@ -29,11 +29,10 @@ const openApiDocument = generateOpenApiDocument(serverRouter, {
 //   );
 // // }
 
-const allowedOrigins = [
-  "http://localhost:3030",
-  "https://buildforms.in",
-  "https://www.buildforms.in",
-];
+const allowedOrigins =
+  env.NODE_ENV === "production"
+    ? [env.APP_URL, "https://www.buildforms.in"]
+    : [env.APP_URL];
 
 app.use(
   cors({
