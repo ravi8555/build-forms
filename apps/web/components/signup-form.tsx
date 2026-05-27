@@ -4,6 +4,7 @@
 import { useForm } from "react-hook-form";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
+import { toast } from "sonner";
 import {
   Card,
   CardContent,
@@ -43,6 +44,7 @@ export function SignupForm({
 
   const onSubmit = async (data: SignupFormData) => {
     try {
+      
       await createUserWithEmailAndPasswordAsync({
         email: data.email,
         fullName: data.name,
@@ -54,9 +56,26 @@ export function SignupForm({
 router.replace(
   `/verify-email-sent?email=${encodeURIComponent(data.email)}`
 )
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err: any) {
+  //   console.log("FULL ERROR:", err);
+  // console.log("DATA:", err?.data);
+  // console.log("SHAPE:", err?.shape);
+  // toast.error("Signup failed");
+
+  const errorCode =
+    err?.data?.code || err?.shape?.data?.code;
+
+  if (
+    err?.data?.code === "CONFLICT" ||
+    err?.shape?.data?.code === "CONFLICT"
+  ) {
+    toast.error("Email already registered");
+    return;
+  }
+
+  toast.error("Signup failed. Please try again.");
+}
+
   };
 
   return (

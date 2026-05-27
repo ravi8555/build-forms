@@ -12,6 +12,7 @@ import {
 } from "@repo/services/user/model"
 const TAGS = ["Authentication"];
 const getPath = generatePath("/authentication");
+import { TRPCError } from "@trpc/server";
 
 
 
@@ -21,19 +22,47 @@ export const authRouter = router({
     method:'POST',
     path: getPath('/createUserWithEmailAndPassword'),
     tags: TAGS}
-  }).input(createUserWithEmailAndPasswordInputModel).output(createUserWithEmailAndPasswordOutputModel).mutation( async ({input, ctx})=>{
-    const {fullName, email, password} = input
+  })
+  .input(createUserWithEmailAndPasswordInputModel)
+  .output(createUserWithEmailAndPasswordOutputModel)
+  .mutation(async ({ input, ctx }) => {
+  try {
+    const { fullName, email, password } = input;
 
-    const {id} = await userService.createUserWithEmailAndPassword({
-      fullName, email, password
-    })
+    const { id } =
+      await userService.createUserWithEmailAndPassword({
+        fullName,
+        email,
+        password,
+      });
 
-    // setAuthenticationCookie(ctx, token)
+    return { id };
 
-    return{
-      id
+  } catch (error: any) {
+    console.log("AUTH ERROR:", error.message);
+    if (error.message === "USER_ALREADY_EXISTS") {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "User already exists",
+      });
     }
-  }),
+
+    throw error;
+  }
+}),
+  // .mutation( async ({input, ctx})=>{
+  //   const {fullName, email, password} = input
+
+  //   const {id} = await userService.createUserWithEmailAndPassword({
+  //     fullName, email, password
+  //   })
+
+  //   // setAuthenticationCookie(ctx, token)
+
+  //   return{
+  //     id
+  //   }
+  // }),
 
   signInwithEmailAndPassword: publicProcedure.meta({openapi:{
     method:'POST',

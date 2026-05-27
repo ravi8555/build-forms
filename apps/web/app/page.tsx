@@ -72,7 +72,7 @@ const user = useUser(false)
             Integrate →
           </a>
         </div>
-        <p className="text-sm text-gray-500 mt-2">No signup required</p>
+        <p className="text-sm text-gray-500 mt-2">Create, share, and analyze forms effortlessly.</p>
       </main>
       <Footer />
     </div>

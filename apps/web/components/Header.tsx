@@ -188,10 +188,10 @@ const Header = () => {
         ) : (
           /* Logged out */
           <Link
-            href="/login"
+            href="/signup"
             className="text-foreground hover:text-[#55C96B] transition"
           >
-            Sign In
+            Sign Up
           </Link>
         )}
 

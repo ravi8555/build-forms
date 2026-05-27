@@ -29,6 +29,7 @@
 // export default UserService;
 
 import {randomBytes, createHmac} from 'node:crypto'
+// import  {TRPCError}  from "@trpc/server";
 import JWT  from 'jsonwebtoken'
 import {db, eq} from '@repo/database'
 import {usersTable} from '@repo/database/models/user'
@@ -101,7 +102,12 @@ class UserService{
 
     console.log("exstingUserWithEmail===>", exstingUserWithEmail);
     
-    if(exstingUserWithEmail) throw new Error(`User with ${email} ID aleary exist`);
+    if(exstingUserWithEmail) 
+// throw new TRPCError({
+//   code: "CONFLICT",
+//   message: "User already exists",
+// });
+      throw new Error(`User with ${email} ID aleary exist`);
 
     const salt = randomBytes(16).toString('hex');
     const hash = await this.generateUserHash(salt, password) 

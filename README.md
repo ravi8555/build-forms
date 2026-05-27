@@ -8,16 +8,16 @@ Built with a scalable monorepo architecture using **Next.js, tRPC, Node.js, Post
 
 ## Live Demo
 
-Frontend: https://your-frontend-url.com  
-API Docs: https://your-api-url.com/docs
+Frontend: https://www.buildforms.in/ 
+API Docs: https://build-forms.onrender.com/docs
 
 ---
 
 ## Demo Credentials
 
 ### Demo User
-Email: demo@buildforms.in  
-Password: Demo@123
+Email: ravi8555@gmail.com 
+Password: Ravindra@123456
 
 ---
 
@@ -373,7 +373,7 @@ apps/web/.env.local
 Example:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=http://localhost:8000/trpc
 ```
 
 ---
