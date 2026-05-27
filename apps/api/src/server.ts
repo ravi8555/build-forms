@@ -31,8 +31,15 @@ const openApiDocument = generateOpenApiDocument(serverRouter, {
 
 const allowedOrigins =
   env.NODE_ENV === "production"
-    ? [env.APP_URL, "https://www.buildforms.in"]
-    : [env.APP_URL];
+    ? [
+        "https://buildforms.in",
+        "https://www.buildforms.in",
+        "https://build-forms.onrender.com",
+      ]
+    : [
+        "http://localhost:3030",
+        "http://localhost:8000",
+      ];
 
 app.use(
   cors({
@@ -40,6 +47,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        console.error("Blocked by CORS:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
