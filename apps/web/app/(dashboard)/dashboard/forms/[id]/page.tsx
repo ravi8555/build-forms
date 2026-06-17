@@ -1,203 +1,3 @@
-// 'use client'
-
-// import React, { useState } from 'react'
-// import { useParams } from 'next/navigation'
-// import { useGetField, useCreateField, useUpdateField, useDeleteField, useListFields  } from '~/hooks/api/form/index'
-// const FormBuilderPage = () => {
-//   const { id: formId } = useParams<{ id: string }>()
-//   const { fields, isLoading, refetch } = useListFields(formId)
-//   const { createFieldAsync } = useCreateField()
-//   const { deleteFieldAsync } = useDeleteField()
-//   const { updateFieldAsync } = useUpdateField()
-
-//   const [isOpen, setIsOpen] = useState(false)
-//   const [label, setLabel] = useState('')
-//   const [type, setType] = useState<'TEXT' | 'NUMBER' | 'EMAIL' | 'PASSWORD' | 'YES_NO'>('TEXT')
-//   const [description, setDescription] = useState('')
-//   const [placeholder, setPlaceholder] = useState('')
-//   const [isRequired, setIsRequired] = useState(false)
-
-//   const [editingField, setEditingField] = useState<any>(null)
-
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault()
-//     // await createFieldAsync({ formId, label, type, description, placeholder, isRequired })
-//     // setIsOpen(false)
-//     // setLabel('')
-//     // setDescription('')
-//     // setPlaceholder('')
-//     // setIsRequired(false)
-//     // refetch() // refresh list
-
-//     if (editingField) {
-//     await updateFieldAsync({
-//       fieldId: editingField.id,
-//       label,
-//       type,
-//       description,
-//       placeholder,
-//       isRequired,
-//     })
-//   } else {
-//     await createFieldAsync({
-//       formId,
-//       label,
-//       type,
-//       description,
-//       placeholder,
-//       isRequired,
-//     })
-//   }
-
-//   setIsOpen(false)
-//   setEditingField(null)
-//   setLabel("")
-//   setDescription("")
-//   setPlaceholder("")
-//   setIsRequired(false)
-
-//   refetch()
-//   }
-
-//   return (
-//     <div className="p-6">
-//       <h1 className="text-2xl font-bold mb-4">Form Builder</h1>
-//       <p className="mb-4">Form ID: {formId}</p>
-
-//       <button
-//         // onClick={() => setIsOpen(true)}
-//     onClick={() => {
-//   setEditingField(null)
-//   setLabel("")
-//   setType("TEXT")
-//   setDescription("")
-//   setPlaceholder("")
-//   setIsRequired(false)
-//   setIsOpen(true)
-// }}
-
-//         className="px-4 py-2 bg-blue-600 text-white rounded"
-//       >
-//        <h2>{editingField ? "Edit Field" : "+ Add Field"}</h2>
-//       </button>
-
-//       {/* Dialog */}
-//       {isOpen && (
-//         <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-//           <div className="bg-white p-6 rounded shadow-lg w-96">
-//             <h2 className="text-lg font-semibold mb-4"><h2>{editingField ? "Edit Field" : "Add Field"}</h2></h2>
-//             <form onSubmit={handleSubmit} className="space-y-4">
-//               <input
-//                 type="text"
-//                 value={label}
-//                 onChange={(e) => setLabel(e.target.value)}
-//                 placeholder="Label"
-//                 className="w-full border rounded px-2 py-1"
-//               />
-//               <select
-//                 value={type}
-//                 onChange={(e) => setType(e.target.value as any)}
-//                 className="w-full border rounded px-2 py-1"
-//               >
-//                 <option value="TEXT">Text</option>
-//                 <option value="NUMBER">Number</option>
-//                 <option value="EMAIL">Email</option>
-//                 <option value="PASSWORD">Password</option>
-//                 <option value="YES_NO">Yes/No</option>
-//               </select>
-//               <input
-//                 type="text"
-//                 value={description}
-//                 onChange={(e) => setDescription(e.target.value)}
-//                 placeholder="Helper text"
-//                 className="w-full border rounded px-2 py-1"
-//               />
-//               <input
-//                 type="text"
-//                 value={placeholder}
-//                 onChange={(e) => setPlaceholder(e.target.value)}
-//                 placeholder="Placeholder"
-//                 className="w-full border rounded px-2 py-1"
-//               />
-//               <label className="flex items-center">
-//                 <input
-//                   type="checkbox"
-//                   checked={isRequired}
-//                   onChange={(e) => setIsRequired(e.target.checked)}
-//                   className="mr-2"
-//                 />
-//                 Required field
-//               </label>
-//               <div className="flex justify-end gap-2">
-//                 <button type="button" onClick={() => {
-//     setIsOpen(false)
-//     setEditingField(null)
-//     setLabel("")
-//     setType("TEXT")
-//     setDescription("")
-//     setPlaceholder("")
-//     setIsRequired(false)
-//   }}className="px-3 py-1 border rounded">
-//                   Cancel
-//                 </button>
-//                 <button type="submit" className="px-3 py-1 bg-blue-600 text-white rounded">
-//                    {editingField ? "Update Field" : "Add Field"}
-//                 </button>
-//               </div>
-//             </form>
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Field cards */}
-//       <div className="mt-6">
-//         <h2 className="text-lg font-semibold mb-2">Fields</h2>
-//         {isLoading && <p>Loading...</p>}
-//         {fields?.map((f) => (
-//           <div key={f.id} className="flex items-center justify-between border p-3 rounded mb-2">
-//             <div>
-//               <p className="font-medium">{f.label}</p>
-//               <div className="flex gap-2 text-sm text-gray-600">
-//                 <span>{f.type}</span>
-//                 {f.isRequired && <span>Required</span>}
-//               </div>
-//               <p className="text-xs text-gray-500">{f.labelKey}</p>
-//             </div>
-//             <div className="flex gap-2">
-//               <button
-//               onClick={() => {
-//   setEditingField(f)
-//   setLabel(f.label)
-//   setType(f.type)
-//   setDescription(f.description ?? "")
-//   setPlaceholder(f.placeholder ?? "")
-//   setIsRequired(f.isRequired)
-//   setIsOpen(true)
-// }}
-//                 // onClick={
-//                 //   () => updateFieldAsync({
-//                 //      fieldId: f.id, label: 'Updated Label' })}
-//                 className="text-blue-600 hover:underline"
-//               >
-//                 ✏️
-//               </button>
-//               <button
-//                 onClick={() => deleteFieldAsync({ fieldId: f.id })}
-//                 className="text-red-600 hover:underline"
-//               >
-//                 🗑️
-//               </button>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   )
-// }
-
-// export default FormBuilderPage
-
 "use client";
 
 import React, { useState } from "react";
@@ -239,7 +39,9 @@ import {
   Plus,
   Pencil,
   Trash2,
-  FileText,
+  FileText, 
+  CirclePlusIcon
+
 } from "lucide-react";
 
 type FieldType =
@@ -328,9 +130,7 @@ export default function FormBuilderPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          {/* <h1 className="text-3xl font-bold text-[#55C96B]">
-            Form Builder
-          </h1> */}
+          
 <h1 className="text-3xl font-bold text-[#55C96B]">
   {form?.title || "Untitled Form"}
 </h1>
@@ -344,23 +144,39 @@ export default function FormBuilderPage() {
             resetForm();
             setIsOpen(true);
           }}
-          className="bg-[#55C96B] hover:bg-[#49b85f] text-white"
+          className="
+              h-8
+              px-3
+              rounded-md
+              border
+              border-border
+              bg-card
+              inline-flex
+              items-center
+              justify-center
+              sec-background
+              transition-all
+              cursor-pointer
+              text-white
+            "
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Add Field
+            <CirclePlusIcon style={{ width:"16px", height:"16px", color:"#ffffff" }} />
+           Add New Field
+          
         </Button>
       </div>
 
-      {/* Fields */}
-      <Card>
-        <CardHeader>
+      {/* Fields */} 
+      <Card className="brdbx transition-all body-bg">
+ 
+        <CardHeader className="">
           <CardTitle className="flex items-center gap-2">
             <FileText size={18} />
             Fields
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="">
           {isLoading && (
             <p className="text-muted-foreground">
               Loading fields...
@@ -376,7 +192,7 @@ export default function FormBuilderPage() {
           {fields?.map((field) => (
             <Card
               key={field.id}
-              className="border border-border"
+              className="border border-border p-6 rounded-xl card-bx brdbx border transition-all  hover:-translate-y-1 text-left mb-10"
             >
               <CardContent className="p-5 flex items-center justify-between">
                 <div>
@@ -435,7 +251,10 @@ export default function FormBuilderPage() {
 
       {/* Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent>
+        <DialogContent className="forms p-6
+             rounded-xl card-bg border transition-all  shadow-blue-500/50
+             duration-300
+             hover:border-[#55C96B]">
           <DialogHeader>
             <DialogTitle>
               {editingField ? "Edit Field" : "Add New Field"}
@@ -469,6 +288,7 @@ export default function FormBuilderPage() {
                 <SelectItem value="EMAIL">Email</SelectItem>
                 <SelectItem value="PASSWORD">Password</SelectItem>
                 <SelectItem value="YES_NO">Yes / No</SelectItem>
+                <SelectItem value="RATING">Rating</SelectItem>
               </SelectContent>
             </Select>
 
@@ -501,7 +321,7 @@ export default function FormBuilderPage() {
               </label>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="card-bg ">
               <Button
                 type="button"
                 variant="outline"

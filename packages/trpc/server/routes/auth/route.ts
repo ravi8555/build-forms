@@ -29,7 +29,7 @@ export const authRouter = router({
   try {
     const { fullName, email, password } = input;
 
-    const { id } =
+    const { id }  =
       await userService.createUserWithEmailAndPassword({
         fullName,
         email,
@@ -43,7 +43,7 @@ export const authRouter = router({
     if (error.message === "USER_ALREADY_EXISTS") {
       throw new TRPCError({
         code: "CONFLICT",
-        message: "User already exists",
+        message: error.message,
       });
     }
 
@@ -185,6 +185,8 @@ resetPassword: publicProcedure
   .mutation(async ({ input }) => {
     return userService.resetPassword(input)
   }),
+
+  
 
 
 

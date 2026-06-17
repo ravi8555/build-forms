@@ -6,6 +6,7 @@ import { NavDocuments } from "~/components/nav-documents"
 import { NavMain } from "~/components/nav-main"
 import { NavSecondary } from "~/components/nav-secondary"
 import { NavUser } from "~/components/nav-user"
+import Link from "next/link"
 import {
   Sidebar,
   SidebarContent,
@@ -151,7 +152,7 @@ const router = useRouter()
 const handleLogout = async () => {
   try {
     await logoutAsync()
-    router.replace("/login")
+    router.replace("/auth")
   } catch (error) {
     console.error(error)
   }
@@ -159,23 +160,18 @@ const handleLogout = async () => {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-            >
-              <a href="/">
-                <CommandIcon className="size-5!" />
-                <span className="text-base font-semibold">BuildForms</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+       
+             <Link href="/">
+                <span className="text-base font-semibold flex">
+                 
+                  <img src={'../logo.png'} style={{width:"28px", height:"28px", marginRight:"10px"}}/>
+                   BuildForms</span>
+              </Link>                   
+           
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavDocuments items={data.documents} /> */}
+        {/* <NavDocuments items={data.documents} />  */}
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
         <SidebarMenuButton onClick={handleLogout}>
           <LogOut />

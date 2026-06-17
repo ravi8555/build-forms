@@ -33,7 +33,7 @@ export function VerifyEmailSentPageContent() {
 
         <div className="flex flex-col gap-3">
           <Link
-            href="/login"
+            href="/auth"
             className="h-11 rounded-xl bg-[#55C96B] text-white flex items-center justify-center hover:bg-[#49b85f]"
           >
             Back to Login

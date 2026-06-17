@@ -28,6 +28,10 @@ export const formsTable = pgTable("forms", {
     .default("DRAFT")
     .notNull(),
 
+    theme: varchar("theme", {
+  length: 50,
+}).default("DEFAULT"),
+
      createdBy: uuid('created_by').references(()=> usersTable.id),
      createdAt: timestamp("created_at").defaultNow(),
      updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),

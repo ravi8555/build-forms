@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import React, { useState } from "react";
 import { Toaster } from "~/components/ui/sonner";
+import { SnackbarProvider } from "notistack";
+
 
 import { trpc } from "~/trpc/client";
 import { createTRPCHttpBatchClientClient } from "~/trpc/create-client";
@@ -32,8 +34,21 @@ export const GlobalProviders: React.FC<{ children: React.ReactNode }> = ({ child
         disableTransitionOnChange
       >
         <trpc.Provider queryClient={queryClient} client={trpcClient}>
+          <SnackbarProvider
+    maxSnack={3}
+    autoHideDuration={3000}
+    anchorOrigin={{
+      vertical: "top",
+      horizontal: "right",
+    }}
+  >
           {children}
-          <Toaster />
+          </SnackbarProvider>
+          <Toaster 
+          richColors
+          // position="top-left"
+          theme="dark"
+  />
         </trpc.Provider>
       </NextThemesProvider>
     </QueryClientProvider>

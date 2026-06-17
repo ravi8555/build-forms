@@ -6,9 +6,11 @@ import { formVisibilityModel } from "@repo/services/forms/model"
 export const createFormInputModel = z.object({
   title: z.string().min(1).max(80).describe("Title of the form"),
   description: z.string().optional().describe("Description of the form"),
+  // theme: z.enum(["DEFAULT","WANO","STARK","BATMAN",]),
+  theme: z.string().nullable(),
   createdBy: z.string().uuid().optional().describe("UUID of the owner"),
   fields: z
-    .array(
+    .array( 
       z.object({
         label: z.string().max(100),
         labelKey: z.string().max(100),
@@ -16,7 +18,7 @@ export const createFormInputModel = z.object({
         isRequired: z.boolean().default(false),
         description: z.string().optional(),
         index: z.string(), // numeric in DB often handled as string in JS
-        type: z.enum(["TEXT", "NUMBER", "EMAIL", "PASSWORD", "YES_NO"]),
+        type: z.enum(["TEXT", "NUMBER", "EMAIL", "PASSWORD", "YES_NO","RATING"]),
       })
     )
     .optional(),
@@ -67,7 +69,7 @@ export const dashboardAnalyticsOutputModel = z.object({
 });
 
 // Enum for field types
-export const fieldTypeEnum = z.enum(["TEXT", "NUMBER", "EMAIL", "YES_NO", "PASSWORD"])
+export const fieldTypeEnum = z.enum(["TEXT", "NUMBER", "EMAIL", "YES_NO", "PASSWORD","RATING"])
 
 // Base field object
 export const formFieldObject = z.object({
@@ -134,7 +136,7 @@ export const getFieldOutputModel = z.object({
   formId: z.string().uuid().nullable(),
   label: z.string(), 
   labelKey: z.string(),
-  type: z.enum(["TEXT", "NUMBER", "EMAIL", "PASSWORD", "YES_NO"]),
+  type: z.enum(["TEXT", "NUMBER", "EMAIL", "PASSWORD", "YES_NO","RATING"]),
   description: z.string().nullable().optional(),
   placeholder: z.string().nullable().optional(),
   isRequired: z.boolean(),
@@ -155,6 +157,7 @@ export const getFormOutputModel = z.object({
   id: z.string(),
   title: z.string().nullable(),
   description: z.string().nullable().optional(),
+  theme: z.string().nullable(),
   createdAt: z.date().nullable(),
   updatedAt: z.date().nullable(),
   fields: z.array(formFieldObject),
@@ -231,6 +234,8 @@ export const publicFormItemModel = z.object({
   id: z.string().uuid(),
   title: z.string().nullable(),
   description: z.string().nullable(),
+  theme: z.string().nullable(),
+  responseCount: z.number(),
   createdAt: z.date().nullable(),
 })
 

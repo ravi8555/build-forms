@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
+import { useSnackbar } from 'notistack';
 import {
   Card,
   CardContent,
@@ -29,10 +30,15 @@ type SignupFormData = {
   password: string;
 };
 
+type SignupFormProps = React.ComponentProps<"form"> & {
+  onSwitchToSignin: () => void;
+};
+
 export function SignupForm({
   className,
+  onSwitchToSignin,
   ...props
-}: React.ComponentProps<"form">) {
+}: SignupFormProps) {
   const router = useRouter();
   const { createUserWithEmailAndPasswordAsync } = useSignup();
 
@@ -41,8 +47,11 @@ export function SignupForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>();
+  
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const onSubmit = async (data: SignupFormData) => {
+    
     try {
       
       await createUserWithEmailAndPasswordAsync({
@@ -57,41 +66,43 @@ router.replace(
   `/verify-email-sent?email=${encodeURIComponent(data.email)}`
 )
     } catch (err: any) {
-  //   console.log("FULL ERROR:", err);
+
+  // console.log("FULL ERROR:", err);
+  // console.log("MESSAGE:", err?.message);
   // console.log("DATA:", err?.data);
   // console.log("SHAPE:", err?.shape);
-  // toast.error("Signup failed");
 
-  const errorCode =
-    err?.data?.code || err?.shape?.data?.code;
+  // const errorCode =
+  //   err?.data?.code ||
+  //   err?.shape?.data?.code;
 
-  if (
-    err?.data?.code === "CONFLICT" ||
-    err?.shape?.data?.code === "CONFLICT"
-  ) {
-    toast.error("Email already registered");
+  // console.log("ERROR CODE:", errorCode);
+
+  if (err?.message === "User already exists") {
+    enqueueSnackbar("User already exists", { variant: "error" });
+    // toast.error("User already exists");
     return;
   }
-
-  toast.error("Signup failed. Please try again.");
-}
+  
+  enqueueSnackbar("Signup failed. Please try again.", { variant: "error" });
+} 
 
   };
 
   return (
 <>  
-<div className={cn("flex flex-col gap-6", className)}>
+<div className={cn("flex flex-col gap-6 p-0", className)}>
         <Card className="border-0 shadow-none bg-transparent">
-          <CardHeader className="text-center">
+          {/* <CardHeader className="text-center">
             <CardTitle className="text-3xl font-semibold">
               Sign Up
             </CardTitle>
-          </CardHeader>
+          </CardHeader> */}
 
           <CardContent>
             <form noValidate
       onSubmit={handleSubmit(onSubmit)}
-      className={cn("flex flex-col gap-5 w-full", className)}
+      className={cn("flex flex-col w-full", className)}
       {...props}
     >
       <FieldGroup>
@@ -102,10 +113,10 @@ router.replace(
     id="name"
     placeholder="John Doe"
     className={cn(
-      "h-12 rounded-xl border transition-all",
+      "h-12 rounded-md transition-all ",
       errors.name
         ? "border-red-400 focus-visible:ring-red-400"
-        : "border-gray-300 focus-visible:ring-[#55C96B]"
+        : "focus-visible:ring-[#55C96B]"
     )}
     {...register("name", {
       required: "Full name is required",
@@ -126,10 +137,10 @@ router.replace(
     type="email"
     placeholder="Enter email"
     className={cn(
-      "h-12 rounded-xl border transition-all",
+      "h-12 rounded-md border transition-all ",
       errors.email
         ? "border-red-400 focus-visible:ring-red-400"
-        : "border-gray-300 focus-visible:ring-[#55C96B]"
+        : " focus-visible:ring-[#55C96B]"
     )}
     {...register("email", {
       required: "Email is required",
@@ -154,10 +165,10 @@ router.replace(
     type="password"
     placeholder="Enter password"
     className={cn(
-      "h-12 rounded-xl border transition-all",
+      "h-12 rounded-md  transition-all ",
       errors.password
         ? "border-red-400 focus-visible:ring-red-400"
-        : "border-gray-300 focus-visible:ring-[#55C96B]"
+        : "focus-visible:ring-[#55C96B]"
     )}
     {...register("password", {
       required: "Password is required",
@@ -178,25 +189,24 @@ router.replace(
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="h-12 rounded-xl bg-[#55C96B] hover:bg-[#49b85f] text-white"
+          className="h-12 rounded-md cursor-pointer bg-[#55C96B] hover:bg-[#49b85f] text-white"
         >
           {isSubmitting ? "Creating..." : "Create my free account"}
         </Button>
-
-        <Button
-                  variant="outline"
-                  type="button"
-                  className="h-12 w-full rounded-xl border-gray-300"
-                >
-                  Sign in with SSO (OIDC)
-                </Button>
-
-        <p className="text-center text-sm text-gray-500">
+<FieldDescription className="text-center text-sm">
           Already have an account?{" "}
-          <Link href="/login" className="text-[#55C96B] font-medium">
-            Sign in
-          </Link>
-        </p>
+          <button className="cursor-pointer text-green-500"
+  type="button"
+  onClick={onSwitchToSignin}
+>
+  Sign in
+</button>
+  </FieldDescription>
+          
+        
+      </FieldGroup>
+      <FieldGroup>
+       
       </FieldGroup>
     </form>
           </CardContent>
@@ -258,7 +268,7 @@ router.replace(
     type="email"
     placeholder="Enter email"
     className={cn(
-      "h-12 rounded-xl border transition-all",
+      "h-12 rounded-md border transition-all",
       errors.email
         ? "border-red-400 focus-visible:ring-red-400"
         : "border-gray-300 focus-visible:ring-[#55C96B]"
@@ -286,7 +296,7 @@ router.replace(
     type="password"
     placeholder="Enter password"
     className={cn(
-      "h-12 rounded-xl border transition-all",
+      "h-12 rounded-md border transition-all",
       errors.password
         ? "border-red-400 focus-visible:ring-red-400"
         : "border-gray-300 focus-visible:ring-[#55C96B]"
@@ -310,7 +320,7 @@ router.replace(
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="h-12 rounded-xl bg-[#55C96B] hover:bg-[#49b85f] text-white"
+          className="h-12 rounded-md bg-[#55C96B] hover:bg-[#49b85f] text-white"
         >
           {isSubmitting ? "Creating..." : "Create my free account"}
         </Button>
@@ -318,7 +328,7 @@ router.replace(
         <Button
                   variant="outline"
                   type="button"
-                  className="h-12 w-full rounded-xl border-gray-300"
+                  className="h-12 w-full rounded-md border-gray-300"
                 >
                   Sign in with SSO (OIDC)
                 </Button>

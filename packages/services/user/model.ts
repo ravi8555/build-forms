@@ -1,15 +1,5 @@
 // import { z } from "zod";
 
-// export const getAuthenticationMethodOutputSchema = z.object({
-//   provider: z.enum(["GOOGLE_OAUTH"]),
-//   displayName: z.string().optional(),
-//   displayText: z.string().optional(),
-//   authUrl: z.string(),
-// });
-// export type GetAuthenticationMethodOutputSchema = z.infer<
-//   typeof getAuthenticationMethodOutputSchema
-// >;
- 
 import { z} from 'zod'
 
 export const createUserWithEmailAndPasswordInput = z.object({
@@ -45,6 +35,26 @@ export const resetPasswordInput = z.object({
   token: z.string(),
   password: z.string().min(8),
 })
-
 export type ResetPasswordInputType =
   z.infer<typeof resetPasswordInput>
+
+export const getAuthenticationMethodOutputSchema = z.object({
+  provider: z.enum(["GOOGLE_OAUTH"]),
+  displayName: z.string().optional(),
+  displayText: z.string().optional(),
+  authUrl: z.string(),
+});
+export type GetAuthenticationMethodOutputSchema = z.infer<
+  typeof getAuthenticationMethodOutputSchema
+>;
+
+
+export const googleOauthInput = z.object({
+  email: z.string(),
+  fullName:z.string(),
+  googleId: z.string(),
+  profileImage: z.string().optional(),
+})
+
+export type GoogleOauthInputType =
+  z.infer<typeof googleOauthInput>

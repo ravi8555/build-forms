@@ -13,9 +13,9 @@ const envSchema = z.object({
   BREVO_FROM_NAME:z.string(),
   APP_URL:z.string(),
 
-  // GOOGLE_OAUTH_CLIENT_ID: z.string(),
-  // GOOGLE_OAUTH_CLIENT_SECRET: z.string(),
-  // GOOGLE_OAUTH_REDIRECT_URI: z.string(),
+  GOOGLE_OAUTH_CLIENT_ID: z.string(),
+  GOOGLE_OAUTH_CLIENT_SECRET: z.string(),
+  GOOGLE_OAUTH_REDIRECT_URI: z.string(),
 
 
 

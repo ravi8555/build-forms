@@ -30,15 +30,6 @@ export default function Page() {
           </div>
         </div> 
 <Footer />
-
-
-      {/* <Header />
-    <div className="mt-2 flex w-full items-center justify-center">
-      <div className="w-full max-w-sm">
-        <LoginForm />
-      </div>
-    </div>
-      <Footer /> */}
-      </>
+</>
   )
 }

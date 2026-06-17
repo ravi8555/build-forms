@@ -1,0 +1,1 @@
+ALTER TYPE "public"."field_type_enum" ADD VALUE 'RATING';

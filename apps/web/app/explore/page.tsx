@@ -3,19 +3,29 @@
 import Link from "next/link"
 import Header from "~/components/Header"
 import Footer from "~/components/Footer"
-import { useListPublicForms } from "~/hooks/api/form"
+import { useListPublicForms, useGetFormSubmissions } from "~/hooks/api/form"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 
 export default function ExplorePage() {
   const { forms, isLoading, isError } =
     useListPublicForms()
+    console.log(forms);   
 
-  return (
+    return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
       <main className="flex-1 px-6 py-12 max-w-7xl mx-auto w-full">
         <div className="mb-10 text-center">
-          <h1 className="text-4xl font-bold text-[#55C96B]">
+          <h1 className="text-4xl font-bold title-font-color">
             Explore Public Forms
           </h1>
 
@@ -40,13 +50,21 @@ export default function ExplorePage() {
           </p>
         )}
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 ">
           {forms?.map((form) => (
+
+   
             <div
-              key={form.id}
-              className="rounded-2xl border bg-card p-6 shadow-sm"
-            >
-              <h2 className="text-xl font-semibold">
+              key={form.id} 
+              className="p-6
+             rounded-xl card-bx border transition-all  shadow-blue-500/50
+             duration-300
+            brdbx
+             hover:-translate-y-1">
+              <div className="res-cnt text-xs flex justify-between">
+                <span className="text-muted-foreground">Theme: {form.theme ?? "DEFAULT"}</span> <span className="text-muted-foreground">{form.responseCount} Responses</span>
+              </div>
+              <h2 className="text-xl title-font-color">
                 {form.title}
               </h2>
 
@@ -57,12 +75,13 @@ export default function ExplorePage() {
               <div className="mt-6">
                 <Link
                   href={`/form/${form.id}`}
-                  className="inline-flex h-10 items-center rounded-xl bg-[#55C96B] px-5 text-white hover:bg-[#49b85f]"
+                  className="inline-flex h-10 items-center rounded-md title-font-color border brd pl-5 pr-5"
                 >
                   Open Form
                 </Link>
               </div>
             </div>
+            
           ))}
         </div>
       </main>

@@ -12,7 +12,7 @@ import {
 import { usersTable } from "./user";
 import { formsTable } from "./form";
 
-export const fieldTypeEnum = pgEnum('field_type_enum', ['TEXT', 'NUMBER', 'EMAIL', 'PASSWORD', 'YES_NO'])
+export const fieldTypeEnum = pgEnum('field_type_enum', ['TEXT', 'NUMBER', 'EMAIL', 'PASSWORD', 'YES_NO', 'RATING'])
 
 export const formFieldsTable = pgTable("forms_fields", {
      id: uuid("id").primaryKey().defaultRandom(),     
@@ -28,6 +28,8 @@ export const formFieldsTable = pgTable("forms_fields", {
      index: numeric('index', {scale:2}).notNull(),
 
      type: fieldTypeEnum('type').notNull(),
+
+     theme: varchar("theme", { length: 50,}).default("DEFAULT"),
 
      createdAt: timestamp("created_at").defaultNow(),
      updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),

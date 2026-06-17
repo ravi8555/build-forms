@@ -1,71 +1,3 @@
-// "use client";
-
-// import React from "react";
-// import { useParams } from "next/navigation";
-// import { useGetForm, useGetFormSubmissions } from "~/hooks/api/form";
-
-// const SubmissionsPage = () => {
-//   const { form_id } = useParams<{ form_id: string }>();
-
-//   // 1. Get form (with fields)
-//   const { form, isLoading: formLoading, error: formError } = useGetForm(form_id);
-
-//   // 2. Get submissions
-//   const { submissions, isLoading: subsLoading, error: subsError } = useGetFormSubmissions(form_id);
-
-//   if (formLoading || subsLoading) return <p>Loading...</p>;
-//   if (formError || subsError) return <p className="text-red-500">Error loading data</p>;
-//   if (!form) return <p>Form not found</p>;
-
-//   const fields = form.fields; // array of {id, label, labelKey, ...}
-
-//   return (
-//     <div className="max-w-5xl mx-auto p-8 bg-white shadow rounded">
-//       <h1 className="text-2xl font-bold mb-6">Submissions for {form.title}</h1>
-
-//       {(!submissions || submissions.length === 0) ? (
-//         <p>No submissions yet.</p>
-//       ) : (
-//         <table className="w-full border-collapse border border-gray-300">
-//           <thead>
-//             <tr className="bg-gray-100">
-//               <th className="border border-gray-300 px-4 py-2">Submission ID</th>
-//               <th className="border border-gray-300 px-4 py-2">Submitted At</th>
-//               {fields.map((f) => (
-//                 <th key={f.id} className="border border-gray-300 px-4 py-2">
-//                   {f.label}
-//                 </th>
-//               ))}
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {submissions.map((s) => (
-//               <tr key={s.id}>
-//                 <td className="border border-gray-300 px-4 py-2">{s.id}</td>
-// <td className="border border-gray-300 px-4 py-2">
-//   {s.createdAt ? new Date(String(s.createdAt)).toLocaleString() : ""}
-// </td>
-
-// {fields.map((f) => {
-//   const val = s.values?.find((v) => v.formFieldId === f.id);
-//   return (
-//     <td key={f.id} className="border border-gray-300 px-4 py-2">
-//       {val ? val.value : ""}
-//     </td>
-//   );
-// })}
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default SubmissionsPage;
-
-
 "use client";
 
 import React from "react";
@@ -98,6 +30,7 @@ import {
 } from "lucide-react";
 import { exportFormSubmissionsToCSV } from "~/lib/export-csv";
 import { Download } from "lucide-react";
+import Header from "~/components/Header";
 
 const SubmissionsPage = () => {
   const { form_id } = useParams<{ form_id: string }>();
@@ -128,7 +61,7 @@ const SubmissionsPage = () => {
   if (formError || subsError || !form) {
     return (
       <div className="p-6">
-        <Card>
+        <Card className="rounded-xl card-bg border transition-all ">
           <CardContent className="py-12 text-center">
             <h2 className="text-2xl font-semibold text-red-500">
               Error loading submissions
@@ -145,11 +78,13 @@ const SubmissionsPage = () => {
   const fields = form.fields;
 
   return (
+    <>
+    <Header />
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
        <div className="flex items-center justify-between mb-6">
-  <h1 className="text-2xl font-bold">
+  <h1 className="text-3xl font-bold text-center mb-6 title-font-color">
     Submissions for {form.title}
   </h1>
 
@@ -157,7 +92,18 @@ const SubmissionsPage = () => {
     onClick={() =>
       exportFormSubmissionsToCSV(form, submissions || [])
     }
-    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#55C96B] text-white hover:opacity-90 transition"
+    className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer
+              px-8
+              rounded-md
+              border
+              border-border
+              bg-card
+              font-semibold
+              inline-flex
+              items-center
+              justify-center
+              sec-background
+              transition-all"
   >
     <Download size={16} />
     Export CSV
@@ -171,7 +117,7 @@ const SubmissionsPage = () => {
 
       {/* Empty state */}
       {!submissions || submissions.length === 0 ? (
-        <Card>
+        <Card className="rounded-xl card-bx brdbx transition-all ">
           <CardContent className="py-16 text-center">
             <Inbox
               className="mx-auto text-muted-foreground"
@@ -188,7 +134,7 @@ const SubmissionsPage = () => {
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card className="rounded-xl card-bx brdbx transition-all ">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileSpreadsheet size={18} />
@@ -249,6 +195,8 @@ const SubmissionsPage = () => {
         </Card>
       )}
     </div>
+    </>
+
   );
 };
 

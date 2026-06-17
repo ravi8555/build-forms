@@ -4,6 +4,8 @@ export const createFormInput = z.object({
   title: z.string().min(1).max(80).describe('Title of the form'),
   description: z.string().optional().describe('Description of the form'),
   createdBy: z.string().uuid().describe('UUID of the owner'),
+  // theme: z.enum(["DEFAULT","WANO","STARK","BATMAN",]),
+  theme: z.string().nullable(),
   fields: z.array(z.object({
     label: z.string().max(100),
     labelKey: z.string().max(100),
@@ -13,7 +15,7 @@ export const createFormInput = z.object({
     index: z.string(), // numeric in DB is often handled as string in JS to preserve precision
     type: z.enum(['TEXT', 'NUMBER', 'EMAIL', 'PASSWORD', 'YES_NO'])
   })).optional()
-});
+}); 
 
 export type CreateFormInputType = z.infer<typeof createFormInput>;
 export type CreateFormServiceType = CreateFormInputType & { createdBy: string }
@@ -29,6 +31,7 @@ export const getFormOutputModel = z.object({
   id: z.string().uuid(),
   title: z.string().nullable(),
   description: z.string().nullable().optional(),
+  theme: z.string().nullable(),
   createdBy: z.string().uuid().nullable(),
   createdAt: z.date().nullable(),
   updatedAt: z.date().nullable(),

@@ -1,96 +1,3 @@
-// "use client";
-
-// import React, { useEffect, useState } from "react";
-// import { useRouter, usePathname } from "next/navigation";
-// import { useUser } from "~/hooks/api/auth"
-// import Link from "next/link";
-// import { useTheme } from "next-themes";
-// import { Sun, Moon } from "lucide-react";
-
-// const Header = () => {
-//   const user = useUser();
-//   const router = useRouter();
-//   const pathname = usePathname();
-//   const { theme, setTheme } = useTheme();
-
-//   const [mounted, setMounted] = useState(false);
-
-//   useEffect(() => {
-//     setMounted(true);
-//   }, []);
-
-//   useEffect(() => {
-//     if (pathname !== "/") return;
-
-//     if (user?.id) {
-//       router.replace("/dashboard");
-//     }
-//   }, [user?.id, pathname, router]);
-
-//   if (!mounted) return null;
-
-//   const isDark = theme === "dark";
-
-//   return (
-//     <header className="flex justify-between items-center px-8 py-4 bg-background shadow-sm">
-//       {/* Logo */}
-//       <Link href="/" className="text-2xl font-bold text-[#55C96B]">
-//         BuildForms
-//       </Link>
-
-//       {/* Navigation */}
-//       <nav className="flex items-center gap-6">
-//         <Link
-//           href="/demo"
-//           className="text-foreground hover:text-[#55C96B] transition"
-//         >
-//           Demo
-//         </Link>
-
-//         <Link
-//           href="/pricing"
-//           className="text-foreground hover:text-[#55C96B] transition"
-//         >
-//           Pricing
-//         </Link>
-
-//         <Link
-//           href="/login"
-//           className="text-foreground hover:text-[#55C96B] transition"
-//         >
-//           Sign In
-//         </Link>
-
-//         {/* Theme Toggle */}
-//         <button
-//           onClick={() => setTheme(isDark ? "light" : "dark")}
-//           className="relative flex h-10 w-20 items-center rounded-full bg-muted border border-border px-1 transition"
-//         >
-//           <div
-//             className={`absolute h-8 w-8 rounded-full bg-[#55C96B] transition-transform duration-300 ${
-//               isDark ? "translate-x-10" : "translate-x-0"
-//             }`}
-//           />
-
-//           <div className="relative z-10 flex w-full justify-between px-1">
-//             <Moon
-//               size={16}
-//               className={isDark ? "text-white" : "text-muted-foreground"}
-//             />
-//             <Sun
-//               size={16}
-//               className={!isDark ? "text-white" : "text-muted-foreground"}
-//             />
-//           </div>
-//         </button>
-//       </nav>
-//     </header>
-//   );
-// };
-
-// export default Header;
-
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -126,7 +33,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       await logoutAsync();
-      router.replace("/login");
+      router.replace("/auth");
     } catch (error) {
       console.error(error);
     }
@@ -140,7 +47,9 @@ const Header = () => {
   return (
     <header className="flex justify-between items-center px-8 py-4 bg-background shadow-sm border-b border-border">
       {/* Logo */}
+
       <Link href="/" className="text-2xl font-bold text-[#55C96B]">
+      <img src="./logo.png" style={{width:"40px", height:"40px", display:"inline-flex"}} />
         BuildForms
       </Link>
 
@@ -188,10 +97,10 @@ const Header = () => {
         ) : (
           /* Logged out */
           <Link
-            href="/signup"
+            href="/auth"
             className="text-foreground hover:text-[#55C96B] transition"
           >
-            Sign Up
+            Start Free
           </Link>
         )}
 

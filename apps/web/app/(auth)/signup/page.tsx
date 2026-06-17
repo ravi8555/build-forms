@@ -1,14 +1,6 @@
 "use client"
 
 import { SignupForm } from "~/components/signup-form"
-import { GalleryVerticalEndIcon } from "lucide-react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 import { useUser } from "~/hooks/api/auth";
@@ -22,16 +14,12 @@ export default function SignupPage() {
       <Header />
     <div className="grid min-h-svh lg:grid-cols-2">
           <div className="flex flex-col gap-4 p-6 md:p-10">
-            
-            {/* <h1 className="text-3xl font-semibold text-center">
-                    Sign Up
-                  </h1> */}
-    
+               
             <div className="flex flex-1 items-center justify-center">
               
               <div className="w-full max-w-sm">
                 
-                <SignupForm />
+                {/* <SignupForm  /> */}
               </div>
             </div>
           </div>

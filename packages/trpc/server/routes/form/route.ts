@@ -56,10 +56,11 @@ export const formRouter = router({
     .mutation(async ({ input, ctx }) => {
       //  console.log('Received input:', input);
       // ctx.user.id is available because authenticatedProcedure injects it
-      const { title, description } = input;
+      const { title, description, theme } = input;
       const { id } = await formService.createForm({
         title,
         description,
+        theme,
         createdBy: ctx.user.id,
       });
 
@@ -239,43 +240,7 @@ export const formRouter = router({
       });
     }),
 
-  // publishForm: authenticatedProcedure
-  // .meta({
-  //   openapi: {
-  //     method: "POST",
-  //     path: getPath("/publishForm"),
-  //     tags: TAGS,
-  //     protect: true,
-  //   },
-  // })
-  // .input(publishFormInputModel)
-  // .output(publishFormOutputModel)
-  // .mutation(async ({ input, ctx }) => {
-  //   return formService.publishForm({
-  //     formId: input.formId,
-  //     userId: ctx.user.id,
-  //   });
-  // }),
-
-  // unpublishForm: authenticatedProcedure
-  // .meta({
-  //   openapi: {
-  //     method: "POST",
-  //     path: getPath("/unpublishForm"),
-  //     tags: TAGS,
-  //     protect: true,
-  //   },
-  // })
-  // .input(publishFormInputModel)
-  // .output(publishFormOutputModel)
-  // .mutation(async ({ input, ctx }) => {
-  //   return formService.unpublishForm({
-  //     formId: input.formId,
-  //     userId: ctx.user.id,
-  //   });
-  // }),
-
-  updateVisibility: authenticatedProcedure
+   updateVisibility: authenticatedProcedure
   .input(updateVisibilityInputModel)
   .output(updateVisibilityOutputModel)
   .mutation(async ({ input, ctx }) => {

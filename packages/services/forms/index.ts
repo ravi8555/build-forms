@@ -1,4 +1,4 @@
-import { db, eq, asc, and, inArray,desc   } from "@repo/database";
+import { db, eq, asc, and, inArray,desc,count   } from "@repo/database";
 import { formsTable } from "@repo/database/models/form";
 import { formFieldsTable } from "@repo/database/models/form-fields";
 import { formSubmissionTable } from "@repo/database/models/form-submission";
@@ -15,11 +15,11 @@ import {
 
 class FormService {
   public async createForm(payload: CreateFormInputType) {
-    const { title, description, createdBy } = await createFormInput.parseAsync(payload);
+    const { title, description,theme, createdBy } = await createFormInput.parseAsync(payload);
     // public async createForm(payload: CreateFormServiceType) {
     // const { title, description, createdBy } = payload
 
-    const result = await db.insert(formsTable).values({ title, description, createdBy }).returning({
+    const result = await db.insert(formsTable).values({ title, description,theme, createdBy }).returning({
       id: formsTable.id,
     });
 
@@ -58,6 +58,7 @@ class FormService {
         id: formsTable.id,
         title: formsTable.title,
         description: formsTable.description,
+        theme: formsTable.theme,
         createdAt: formsTable.createdAt,
         updatedAt: formsTable.updatedAt,
 
@@ -91,12 +92,12 @@ class FormService {
 }
 
     // const { id, title, description, createdAt, updatedAt } = rows[0]!;
-    const { id, title, description, createdAt, updatedAt } = formMeta;
+    const { id, title, description, theme, createdAt, updatedAt } = formMeta;
     const fields = rows
       .filter((r) => r.field?.id !== null)
       .map((r) => r.field as NonNullable<typeof r.field>);
 
-    return { id, title, description, createdAt, updatedAt, fields };
+    return { id, title, description, theme, createdAt, updatedAt, fields };
   }
 
 
@@ -287,10 +288,22 @@ public async listPublicForms() {
       id: formsTable.id,
       title: formsTable.title,
       description: formsTable.description,
+      theme: formsTable.theme,
+      responseCount: count(formSubmissionTable.id),
       createdAt: formsTable.createdAt,
-    })
+    })    
     .from(formsTable)
+    .leftJoin(
+      formSubmissionTable,
+      eq(formSubmissionTable.formId, formsTable.id)
+    )
     .where(eq(formsTable.visibility, "PUBLIC"))
+    .groupBy(
+      formsTable.id,
+      formsTable.title,
+      formsTable.description,
+      formsTable.createdAt
+    )
     .orderBy(desc(formsTable.createdAt));
 }
 

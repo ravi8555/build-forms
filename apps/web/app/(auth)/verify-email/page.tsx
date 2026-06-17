@@ -263,7 +263,7 @@ function VerifyEmailContent() {
         setStatus("success");
 
         setTimeout(() => {
-          router.replace("/login");
+          router.replace("/auth");
         }, 2000);
       } catch (error: any) {
         if (
@@ -337,7 +337,7 @@ function VerifyEmailContent() {
             </p>
 
             <Button
-              onClick={() => router.replace("/login")}
+              onClick={() => router.replace("/auth")}
               className="bg-[#55C96B]"
             >
               Go to Login

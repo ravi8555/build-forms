@@ -78,7 +78,7 @@
     //                   type="email"
     //                   placeholder="Enter email"
     //                   className={cn(
-    //                     "h-12 rounded-xl border transition-all",
+    //                     "h-12 rounded-md border transition-all",
     //                     errors.email
     //                       ? "border-red-400 focus-visible:ring-red-400"
     //                       : "border-gray-300 focus-visible:ring-[#55C96B]"
@@ -116,7 +116,7 @@
     //                   type="password"
     //                   placeholder="Enter password"
     //                   className={cn(
-    //                     "h-12 rounded-xl border transition-all",
+    //                     "h-12 rounded-md border transition-all",
     //                     errors.password
     //                       ? "border-red-400 focus-visible:ring-red-400"
     //                       : "border-gray-300 focus-visible:ring-[#55C96B]"
@@ -141,7 +141,7 @@
     //                 <Button
     //                   type="submit"
     //                   disabled={isSubmitting}
-    //                   className="h-12 w-full rounded-xl bg-[#55C96B] hover:bg-[#49b85f] text-white"
+    //                   className="h-12 w-full rounded-md bg-[#55C96B] hover:bg-[#49b85f] text-white"
     //                 >
     //                   {isSubmitting ? "Signing in..." : "Sign in"}
     //                 </Button>
@@ -149,7 +149,7 @@
     //                 <Button
     //                   variant="outline"
     //                   type="button"
-    //                   className="h-12 w-full rounded-xl border-gray-300"
+    //                   className="h-12 w-full rounded-md border-gray-300"
     //                 >
     //                   Sign in with SSO (OIDC)
     //                 </Button>
@@ -177,6 +177,7 @@
 
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -202,11 +203,15 @@ type LoginFormData = {
   email: string;
   password: string;
 };
+type LoginFormProps = React.ComponentProps<"div"> & {
+  onSwitchToSignup: () => void;
+};
 
 export function LoginForm({
   className,
+  onSwitchToSignup,
   ...props
-}: React.ComponentProps<"div">) {
+}: LoginFormProps) {
   const router = useRouter();
 
   const { signInwithEmailAndPasswordAsync } = useSignIn();
@@ -250,8 +255,14 @@ export function LoginForm({
       await resendVerificationMutation.mutateAsync({
         email: loginEmail,
       });
-
-      alert("Verification email sent successfully");
+      setTimeout(()=>{
+router.replace(
+  `/verify-email-sent?email=${encodeURIComponent(loginEmail)}`
+)
+      },10000)
+ 
+     
+      // alert("Verification email sent successfully");
       setShowVerifyPopup(false);
     } catch (error) {
       console.error(error);
@@ -260,32 +271,26 @@ export function LoginForm({
 
   return (
     <>
-      <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <div className={cn("flex flex-col gap-6 p-0", className)} {...props}>
         <Card className="border-0 shadow-none bg-transparent">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-semibold">
-              Sign in
-            </CardTitle>
-
-            <CardDescription>
+                     
+            {/* <CardDescription>
               Welcome back. Enter your credentials.
-            </CardDescription>
-          </CardHeader>
-
+            </CardDescription> */}
+         
           <CardContent>
             <form noValidate onSubmit={handleSubmit(onSubmit)}>
               <FieldGroup className="">
                 <Field>
                   <FieldLabel>Email</FieldLabel>
-
                   <Input
                     type="email"
                     placeholder="Enter email"
                     className={cn(
-                      "h-12 rounded-xl border transition-all",
+                      "h-12 rounded-lg border transition-all",
                       errors.email
                         ? "border-red-400 focus-visible:ring-red-400"
-                        : "border-gray-300 focus-visible:ring-[#55C96B]"
+                        : "focus-visible:ring-[#55C96B]"
                     )}
                     {...register("email", {
                       required: "Email is required",
@@ -310,10 +315,10 @@ export function LoginForm({
                     type="password"
                     placeholder="Enter password"
                     className={cn(
-                      "h-12 rounded-xl border transition-all",
+                      "h-12 rounded-lg border transition-all",
                       errors.password
                         ? "border-red-400 focus-visible:ring-red-400"
-                        : "border-gray-300 focus-visible:ring-[#55C96B]"
+                        : "focus-visible:ring-[#55C96B]"
                     )}
                     {...register("password", {
                       required: "Password is required",
@@ -339,24 +344,29 @@ export function LoginForm({
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="h-12 rounded-xl bg-[#55C96B] hover:bg-[#49b85f] text-white"
+                  className="h-12 rounded-md cursor-pointer bg-[#55C96B] hover:bg-[#49b85f] text-white"
                 >
                   {isSubmitting ? "Signing in..." : "Sign in"}
                 </Button>
 
-                <Button
+                {/* <Button
                   variant="outline"
                   type="button"
-                  className="h-12 rounded-xl  border-gray-300  bg-white hover:bg-gray-50"
+                  className="h-12 rounded-md  border-gray-300  bg-white hover:bg-gray-50"
                 >
                   Sign in with SSO (OIDC)
-                </Button>
+                </Button> */}
 
                 <FieldDescription className="text-center">
                   Don&apos;t have an account?{" "}
-                  <Link href="/signup" className="text-[#55C96B] font-medium">
-                    Sign up
-                  </Link>
+                  
+
+                  <button className="cursor-pointer text-green-500"
+  type="button"
+  onClick={onSwitchToSignup}
+>
+  Sign Up
+</button>
                 </FieldDescription>
               </FieldGroup>
             </form>

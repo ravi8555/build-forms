@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 // Enum for field types
-export const fieldTypeEnum = z.enum(["TEXT", "NUMBER", "EMAIL", "YES_NO", "PASSWORD"])
+export const fieldTypeEnum = z.enum(["TEXT", "NUMBER", "EMAIL", "YES_NO", "PASSWORD","RATING"])
 
 // ✅ Create Field Input
 export const createFieldInput = z.object({

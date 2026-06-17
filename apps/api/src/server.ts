@@ -7,12 +7,16 @@ import { generateOpenApiDocument, createOpenApiExpressMiddleware } from "trpc-to
 import { apiReference } from "@scalar/express-api-reference";
 
 import { serverRouter, createContext } from "@repo/trpc/server";
+import { userService } from "@repo/trpc/server/services";
 
 import cookieParser from 'cookie-parser'
 
 import { env } from "./env";
 import { tuple } from "zod";
-
+import { googleOAuth2Client } from "../../../packages/services/clients/google-oauth";
+import {
+  setAuthenticationCookieForExpress,
+} from "@repo/trpc/server/utils/cookies";
 export const app = express();
 const openApiDocument = generateOpenApiDocument(serverRouter, {
   title: "BuildForms OpenAPI",
@@ -92,6 +96,118 @@ app.get("/openapi.json", (req, res) => {
 logger.debug(`docs: ${env.BASE_URL}/docs`);
 app.use("/docs", apiReference({ url: "/openapi.json" }));
 
+app.get("/api/auth/google", async (req, res) => {
+  const url = googleOAuth2Client.generateAuthUrl({
+    access_type: "offline",
+    scope: ["openid", "email", "profile"],
+    prompt: "consent",
+  });
+
+  console.log(
+  "REDIRECT URI:",
+  env.GOOGLE_OAUTH_REDIRECT_URI
+);
+
+  res.redirect(url);
+});
+
+// app.get(
+//   "/api/auth/google/callback",
+//   async (req, res) => {
+//     const code = req.query.code as string;
+
+//     const { tokens } =
+//       await googleOAuth2Client.getToken(code);
+
+//     googleOAuth2Client.setCredentials(tokens);
+
+//     const ticket =
+//       await googleOAuth2Client.verifyIdToken({
+//         idToken: tokens.id_token!,
+//         audience: env.GOOGLE_OAUTH_CLIENT_ID,
+//       });
+
+//     const payload = ticket.getPayload();
+
+//     if (!payload?.email) {
+//       return res
+//         .status(400)
+//         .json({ message: "Email not found" });
+//     }
+
+//     const email = payload.email;
+//     const fullName = payload.name ?? "";
+//     const profileImage =
+//       payload.picture ?? "";
+
+//     // create/login user here
+
+//     res.redirect(
+//       `${env.APP_URL}/dashboard`
+//     );
+//   }
+// );
+
+app.get(
+  "/api/auth/google/callback",
+  async (req, res) => {
+    const code = req.query.code as string;
+
+    const { tokens } =
+      await googleOAuth2Client.getToken(code);
+
+    googleOAuth2Client.setCredentials(tokens);
+
+    const ticket =
+      await googleOAuth2Client.verifyIdToken({
+        idToken: tokens.id_token!,
+        audience: env.GOOGLE_OAUTH_CLIENT_ID,
+      });
+
+    const payload = ticket.getPayload();
+
+    if (!payload?.email) {
+      return res
+        .status(400)
+        .json({ message: "Email not found" });
+    }
+
+    const email = payload.email;
+
+    const fullName =
+      payload.name ?? "";
+
+    const profileImage =
+      payload.picture ?? "";
+
+    // LOGIN / CREATE USER
+    const user =
+  await userService.loginWithGoogle({
+    email,
+    fullName,
+    googleId: payload.sub!,
+    profileImage,
+  });
+
+    // GENERATE INTERNAL JWT
+    const { token } =
+      await userService.generateUserToken({
+        id: user.id,
+      });
+
+    // SET COOKIE
+    setAuthenticationCookieForExpress(
+      res,
+      token
+    );
+
+    // REDIRECT FRONTEND
+    res.redirect(
+      `${env.APP_URL}/dashboard`
+    );
+  }
+);
+
 app.use(
   "/api",
   createOpenApiExpressMiddleware({
@@ -107,5 +223,8 @@ app.use(
     createContext,
   }),
 );
+
+
+
 
 export default app;

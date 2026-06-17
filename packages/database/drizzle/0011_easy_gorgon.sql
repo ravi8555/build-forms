@@ -1,0 +1,1 @@
+ALTER TABLE "forms_fields" ADD COLUMN "theme" varchar(50) DEFAULT 'DEFAULT';

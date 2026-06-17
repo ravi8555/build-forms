@@ -284,62 +284,6 @@ export const useDeleteForm = () => {
   };
 };
 
-// export const usePublishForm = () => {
-//   const utils = trpc.useUtils();
-
-//   const {
-//     mutateAsync: publishFormAsync,
-//     mutate: publishForm,
-//     error,
-//     isError,
-//     isIdle,
-//     isSuccess,
-//     status,
-//   } = trpc.form.publishForm.useMutation({
-//     onSuccess: async () => {
-//       await utils.form.listForms.invalidate();
-//     },
-//   });
-
-//   return {
-//     publishFormAsync,
-//     publishForm,
-//     error,
-//     isError,
-//     isIdle,
-//     isSuccess,
-//     status,
-//   };
-// };
-
-// export const useUnpublishForm = () => {
-//   const utils = trpc.useUtils();
-
-//   const {
-//     mutateAsync: unpublishFormAsync,
-//     mutate: unpublishForm,
-//     error,
-//     isError,
-//     isIdle,
-//     isSuccess,
-//     status,
-//   } = trpc.form.unpublishForm.useMutation({
-//     onSuccess: async () => {
-//       await utils.form.listForms.invalidate();
-//     },
-//   });
-
-//   return {
-//     unpublishFormAsync,
-//     unpublishForm,
-//     error,
-//     isError,
-//     isIdle,
-//     isSuccess,
-//     status,
-//   }; 
-// };
-
 export const useDashboardAnalytics = () => {
   const {
     data,

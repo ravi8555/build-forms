@@ -26,9 +26,14 @@ export const usersTable = pgTable("users", {
   passwordResetToken: text("password_reset_token"),
   passwordResetExpiresAt: timestamp("password_reset_expires_at"),
 
-
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
+
+  googleId: text("google_id").unique(),
+
+  authProvider: varchar("auth_provider", { length: 20 })
+  .default("LOCAL")
+  .notNull(),
 });
 
 export type SelectUser = typeof usersTable.$inferSelect;

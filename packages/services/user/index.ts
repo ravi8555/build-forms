@@ -1,32 +1,33 @@
 // import { db } from "@repo/database";
 // import { usersTable } from "@repo/database/schema";
 // import { env } from "../env";
-// import { googleOAuth2Client } from "../clients/google-oauth";
 // import { GetAuthenticationMethodOutputSchema } from "./model";
 
 // class UserService {
-//   public async getAuthenticationMethods(): Promise<
-//     ReadonlyArray<GetAuthenticationMethodOutputSchema>
-//   > {
-//     const supportedAuthenticationProviders: GetAuthenticationMethodOutputSchema[] = [];
+    // public async getAuthenticationMethods(): Promise<
+    //   ReadonlyArray<GetAuthenticationMethodOutputSchema>
+    // > {
+    //     const supportedAuthenticationProviders: GetAuthenticationMethodOutputSchema[] = [];
+    
+    //     const isGoogleConfigured = !!(env.GOOGLE_OAUTH_CLIENT_ID && env.GOOGLE_OAUTH_CLIENT_SECRET);
+    
+    //     if (isGoogleConfigured) {
+    //         const url = googleOAuth2Client.generateAuthUrl();
+    //         supportedAuthenticationProviders.push({
+    //             provider: "GOOGLE_OAUTH",
+    //             displayName: "Google",
+    //             displayText: "Signin with Google",
+    //             authUrl: url,
+    //           });
+    //         }
+        
+    //         return supportedAuthenticationProviders;
+    //       }
+    //     }
+        
+        // export default UserService;
 
-//     const isGoogleConfigured = !!(env.GOOGLE_OAUTH_CLIENT_ID && env.GOOGLE_OAUTH_CLIENT_SECRET);
-
-//     if (isGoogleConfigured) {
-//       const url = googleOAuth2Client.generateAuthUrl();
-//       supportedAuthenticationProviders.push({
-//         provider: "GOOGLE_OAUTH",
-//         displayName: "Google",
-//         displayText: "Signin with Google",
-//         authUrl: url,
-//       });
-//     }
-
-//     return supportedAuthenticationProviders;
-//   }
-// }
-
-// export default UserService;
+import { googleOAuth2Client } from "../clients/google-oauth";
 
 import {randomBytes, createHmac} from 'node:crypto'
 // import  {TRPCError}  from "@trpc/server";
@@ -36,13 +37,20 @@ import {usersTable} from '@repo/database/models/user'
 import {env} from '../env'
 import {EmailUtils} from '../utils/email'
 
-import {CreateUserWithEmailAndPasswordType, createUserWithEmailAndPasswordInput, GenerateUserTokenPayloadType, generateUserTokenPayload, SignInUserWithEmailAndPasswordInputType, signInUserWithEmailAndPasswordInput, ForgotPasswordInputType,ResetPasswordInputType,forgotPasswordInput,resetPasswordInput} from './model'
-import { email } from 'zod'
-import { error } from 'node:console'
-import { th } from 'zod/v4/locales'
+import {CreateUserWithEmailAndPasswordType, createUserWithEmailAndPasswordInput, GenerateUserTokenPayloadType, generateUserTokenPayload, SignInUserWithEmailAndPasswordInputType, signInUserWithEmailAndPasswordInput, ForgotPasswordInputType,ResetPasswordInputType,forgotPasswordInput,resetPasswordInput,GetAuthenticationMethodOutputSchema,GoogleOauthInputType} from './model'
+// import { TRPCError } from "@trpc/server";
 
+export class AppError extends Error {
+  code: string;
 
+  constructor(message: string, code: string) {
+    super(message);
+    this.code = code;
+  }
+}
 class UserService{
+
+  
 
   private async getuserByEmail(email:string){
       const result = await db.select().from(usersTable).where(eq(usersTable.email, email));
@@ -50,9 +58,16 @@ class UserService{
       return result[0]
   }
 
-  private async generateUserToken(payload:GenerateUserTokenPayloadType){
+  public async generateUserToken(payload:GenerateUserTokenPayloadType){
    const {id} = await generateUserTokenPayload.parseAsync(payload)
-   const token = JWT.sign({id}, env.JWT_SECRET);
+   const token = JWT.sign(
+  { id },
+  env.JWT_SECRET,
+  {
+    expiresIn: "7d",
+    issuer: "buildforms",
+  }
+);
    return { token }
 
   }
@@ -103,11 +118,10 @@ class UserService{
     console.log("exstingUserWithEmail===>", exstingUserWithEmail);
     
     if(exstingUserWithEmail) 
-// throw new TRPCError({
-//   code: "CONFLICT",
-//   message: "User already exists",
-// });
-      throw new Error(`User with ${email} ID aleary exist`);
+       throw new AppError(
+    "User already exists",
+    "USER_ALREADY_EXISTS"
+  );
 
     const salt = randomBytes(16).toString('hex');
     const hash = await this.generateUserHash(salt, password) 
@@ -333,6 +347,68 @@ public async resetPassword(
   }
 }
 
+public async loginWithGoogle(payload: GoogleOauthInputType) {
+  const existingUser =
+    await this.getuserByEmail(payload.email);
+
+  if (existingUser) {
+     if (!existingUser.googleId) {
+    await db
+      .update(usersTable)
+      .set({
+        googleId: payload.googleId,
+        authProvider: "GOOGLE",
+        emailVerified: true,
+      })
+      .where(eq(usersTable.id, existingUser.id));
+  }
+
+  return {
+    id: existingUser.id,
+  };
+  }
+
+ const insertedUser = await db
+  .insert(usersTable)
+  .values({
+    email: payload.email,
+    fullName: payload.fullName,
+    googleId: payload.googleId,
+    authProvider: "GOOGLE",
+    emailVerified: true,
+    profileImageUrl: payload.profileImage,
+  })
+    .returning({
+      id: usersTable.id,
+    });
+
+  return {
+    id: insertedUser[0]!.id,
+  };
+}
+
+
+
+public async getAuthenticationMethods(): Promise<
+      ReadonlyArray<GetAuthenticationMethodOutputSchema>
+    > {
+        const supportedAuthenticationProviders: GetAuthenticationMethodOutputSchema[] = [];
+    
+        const isGoogleConfigured = !!(env.GOOGLE_OAUTH_CLIENT_ID && env.GOOGLE_OAUTH_CLIENT_SECRET);
+    
+        if (isGoogleConfigured) {
+            const url = googleOAuth2Client.generateAuthUrl();
+            supportedAuthenticationProviders.push({
+                provider: "GOOGLE_OAUTH",
+                displayName: "Google",
+                displayText: "Signin with Google",
+                authUrl: url,
+              });
+            }
+        
+            return supportedAuthenticationProviders;
+          }
+        
 
   
 }

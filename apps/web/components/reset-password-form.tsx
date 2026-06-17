@@ -52,7 +52,7 @@ export function ResetPasswordFormContent({
         password: data.password,
       })
 
-      router.replace("/login")
+      router.replace("/auth")
     } catch (err) {
       console.error(err)
       alert("Reset link expired or invalid")
@@ -130,7 +130,7 @@ export function ResetPasswordFormContent({
 
         <p className="text-center text-sm">
           <Link
-            href="/login"
+            href="/auth"
             className="text-[#55C96B] font-medium"
           >
             Back to Login

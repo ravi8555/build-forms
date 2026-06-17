@@ -95,7 +95,7 @@ router.replace(
         </Button>
 
         <p className="text-center text-sm">
-          <Link href="/login" className="text-[#55C96B]">
+          <Link href="/auth" className="text-[#55C96B]">
             Back to Login
           </Link>
         </p>

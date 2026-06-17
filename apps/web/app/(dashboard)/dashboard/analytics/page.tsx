@@ -1,119 +1,3 @@
-// "use client";
-
-// import {
-//   Card,
-//   CardContent,
-//   CardHeader,
-//   CardTitle,
-// } from "~/components/ui/card";
-
-// import {
-//   BarChart,
-//   Bar,
-//   XAxis,
-//   YAxis,
-//   Tooltip,
-//   ResponsiveContainer,
-// } from "recharts";
-
-// import { useDashboardAnalytics } from "~/hooks/api/form";
-
-// export default function DashboardPage() {
-//   const { analytics, isLoading } = useDashboardAnalytics();
-
-//   if (isLoading) {
-//     return <div className="p-6">Loading analytics...</div>;
-//   }
-
-//   if (!analytics) {
-//     return <div className="p-6">No analytics found.</div>;
-//   }
-
-//   return (
-//     <div className="p-6 space-y-6">
-//       <h1 className="text-3xl font-bold text-[#55C96B]">Analytics</h1>
-
-//       {/* cards */}
-//       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-//         <Card>
-//           <CardHeader>
-//             <CardTitle>Total Forms</CardTitle>
-//           </CardHeader>
-//           <CardContent className="text-3xl font-bold">
-//             {analytics.totalForms}
-//           </CardContent>
-//         </Card>
-
-//         <Card>
-//           <CardHeader>
-//             <CardTitle>Published</CardTitle>
-//           </CardHeader>
-//           <CardContent className="text-3xl font-bold text-green-600">
-//             {analytics.publishedForms}
-//           </CardContent>
-//         </Card>
-
-//         <Card>
-//           <CardHeader>
-//             <CardTitle>Drafts</CardTitle>
-//           </CardHeader>
-//           <CardContent className="text-3xl font-bold text-yellow-500">
-//             {analytics.draftForms}
-//           </CardContent>
-//         </Card>
-
-//         <Card>
-//           <CardHeader>
-//             <CardTitle>Total Responses</CardTitle>
-//           </CardHeader>
-//           <CardContent className="text-3xl font-bold">
-//             {analytics.totalResponses}
-//           </CardContent>
-//         </Card>
-//       </div>
-
-//       {/* chart */}
-//       <Card>
-//         <CardHeader>
-//           <CardTitle>Responses Over Time</CardTitle>
-//         </CardHeader>
-//         <CardContent className="h-[350px]">
-//           <ResponsiveContainer width="100%" height="100%">
-//             <BarChart data={analytics.responsesByDate}>
-//               <XAxis dataKey="date" />
-//               <YAxis />
-//               <Tooltip />
-//               <Bar dataKey="count" fill="#55C96B" />
-//             </BarChart>
-//           </ResponsiveContainer>
-//         </CardContent>
-//       </Card>
-
-//       {/* recent forms */}
-//       <Card>
-//         <CardHeader>
-//           <CardTitle>Recent Forms</CardTitle>
-//         </CardHeader>
-//         <CardContent>
-//           <div className="space-y-4">
-//             {analytics.recentForms.map((form) => (
-//               <div
-//                 key={form.id}
-//                 className="flex justify-between border-b pb-3"
-//               >
-//                 <span>{form.title}</span>
-//                 <span>
-//                   {form.isPublished ? "Published" : "Draft"}
-//                 </span>
-//               </div>
-//             ))}
-//           </div>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import React from "react";
@@ -180,7 +64,7 @@ export default function AnalyticsPage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-[#55C96B]">
+        <h1 className="text-3xl font-bold title-font-color">
           Analytics
         </h1>
 
@@ -191,7 +75,7 @@ export default function AnalyticsPage() {
 
       {/* KPI */}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <Card>
+        <Card className="rounded-xl card-bg border transition-all hover:-translate-y-2 transitionshadow-lg shadow-blue-500/50">
           <CardContent className="flex items-center justify-between p-6">
             <div>
               <p className="text-sm text-muted-foreground">
@@ -207,7 +91,7 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-xl card-bg border transition-all hover:-translate-y-2 transitionshadow-lg shadow-blue-500/50">
           <CardContent className="flex items-center justify-between p-6">
             <div>
               <p className="text-sm text-muted-foreground">
@@ -223,7 +107,7 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-xl card-bg border transition-all hover:-translate-y-2 transitionshadow-lg shadow-blue-500/50">
           <CardContent className="flex items-center justify-between p-6">
             <div>
               <p className="text-sm text-muted-foreground">
@@ -239,7 +123,7 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="rounded-xl card-bg border transition-all hover:-translate-y-2 transitionshadow-lg shadow-blue-500/50">
           <CardContent className="flex items-center justify-between p-6">
             <div>
               <p className="text-sm text-muted-foreground">
@@ -259,7 +143,7 @@ export default function AnalyticsPage() {
       {/* Charts */}
       <div className="grid gap-6 xl:grid-cols-2">
         {/* Bar chart */}
-        <Card>
+        <Card className="rounded-xl card-bg border transition-all hover:-translate-y-2 transitionshadow-lg shadow-blue-500/50">
           <CardHeader>
             <CardTitle>Responses Over Time</CardTitle>
 
@@ -284,7 +168,7 @@ export default function AnalyticsPage() {
         </Card>
 
         {/* Pie chart */}
-        <Card>
+        <Card className="rounded-xl card-bg border transition-all hover:-translate-y-2 transitionshadow-lg shadow-blue-500/50">
           <CardHeader>
             <CardTitle>Visibility Breakdown</CardTitle>
 
@@ -320,7 +204,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Recent Forms */}
-      <Card>
+      <Card className="rounded-xl card-bg border transition-all hover:-translate-y-2 transitionshadow-lg shadow-blue-500/50">
         <CardHeader>
           <CardTitle>Recent Forms</CardTitle>
 

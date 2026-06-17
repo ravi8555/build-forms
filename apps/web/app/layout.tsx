@@ -6,7 +6,6 @@ import { Geist } from "next/font/google"
 import { cn } from "~/lib/utils"
 import { TooltipProvider } from "~/components/ui/tooltip"
 import { ThemeProvider } from "next-themes"
-import { Toaster } from "~/components/ui/sonner";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -33,18 +32,22 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  
+// const { enqueueSnackbar } = useSnackbar();
   return (
     <html lang="en" suppressHydrationWarning className={cn("dark", "font-sans", geist.variable)}>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable}, body-bg`}>
          <ThemeProvider
     attribute="class"
     defaultTheme="dark"
     enableSystem={false}
   >
         <GlobalProviders>
+          
           <TooltipProvider>
             {children}
           </TooltipProvider>
+          
         </GlobalProviders>
         </ThemeProvider>
       </body>
