@@ -159,13 +159,13 @@ const page = () => {
                     <span>Continue with Google</span>
                   </Button>
 
-                  <Button
+                  {/* <Button
                   variant="outline"
                   type="button"
                   className="h-12 mt-2 w-full rounded-md cursor-pointer"
                 >
                   Sign in with SSO (OIDC)
-                </Button>
+                </Button> */}
 
                   {/* Divider */}
                  
