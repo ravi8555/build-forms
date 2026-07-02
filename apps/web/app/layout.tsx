@@ -7,6 +7,7 @@ import { cn } from "~/lib/utils"
 import { TooltipProvider } from "~/components/ui/tooltip"
 import { ThemeProvider } from "next-themes"
 
+
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -25,6 +26,17 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "BuildForms",
   description: "Media Forwarding",
+
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+
+  manifest: "/site.webmanifest",
 }
 
 export default function RootLayout({

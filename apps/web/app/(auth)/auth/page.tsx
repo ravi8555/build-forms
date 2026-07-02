@@ -152,7 +152,7 @@ const page = () => {
                     variant="outline"
                     className="flex h-12 w-full items-center justify-center gap-3 rounded-md border-gray-300 bg-white hover:bg-gray-50 mt-4"
                     onClick={() => {
-                      window.location.href = "http://localhost:8000/api/auth/google";
+                      window.location.href = `${process.env.BASE_URL}/api/auth/google`;
                     }}
                   >
                     <GoogleIcon />
