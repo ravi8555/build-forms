@@ -77,7 +77,7 @@ const page = () => {
 
       <div className="w-full max-w-md">
   <div 
-  className="relative rounded-2xl p-8 border bx"
+  className="relative rounded-2xl p-4 border bx"
   >
  {/* relative rounded-2xl p-8 border
     bg-white
@@ -94,7 +94,7 @@ const page = () => {
 
   
     <Tabs defaultValue="signin" className="w-full" value={activeTab} onValueChange={setActiveTab}>
-  <TabsList 
+  {/* <TabsList 
   className="w-full justify-start mb-2 p-0 bg-transparent border-1 rounded-l-lg rounded-r-lg
    min-h-[46px]"
 >
@@ -142,7 +142,7 @@ const page = () => {
   >
     Sign Up
   </TabsTrigger>
-</TabsList>
+</TabsList> */}
 
  {/* <div className="border rounded-md p-4 mb-4">      */}
   
@@ -150,7 +150,7 @@ const page = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex h-12 w-full items-center justify-center gap-3 rounded-md border-gray-300 bg-white hover:bg-gray-50 mt-4"
+                    className="flex h-12 w-full items-center justify-center gap-3 rounded-md border-gray-300 bg-white hover:bg-gray-50 mt-0"
                     onClick={() => {
                       window.location.href = `${process.env.BASE_URL}/api/auth/google`;
                     }}

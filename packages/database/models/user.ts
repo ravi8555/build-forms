@@ -5,7 +5,10 @@ import {
   timestamp,
   boolean,
   text,
+  pgEnum
 } from "drizzle-orm/pg-core";
+
+export const userRoleMdel =  pgEnum("role_visibility_enum", ["USER", "SUPER_ADMIN"]);
 
 export const usersTable = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -14,6 +17,8 @@ export const usersTable = pgTable("users", {
 
   email: varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: boolean("email_verified").default(false),
+
+  role: userRoleMdel("role").default("USER").notNull(),
 
   verificationToken: text("verification_token"),
   verificationTokenExpiry: timestamp("verification_token_expiry"),

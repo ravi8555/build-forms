@@ -101,12 +101,13 @@ export const authRouter = router({
   )=>{
     // const userToken = getAuthenticationCookie(ctx)
     // if(!userToken) throw new Error('User is not logged in')
-    const {id, email, fullName, profileImageUrl} = await userService.getUserInfoById(ctx.user.id)
+    const {id, email, role, fullName, profileImageUrl} = await userService.getUserInfoById(ctx.user.id)
 
   return {
     id,
     fullName,
     email,
+    role,
     profileImageUrl
   }  
   }),

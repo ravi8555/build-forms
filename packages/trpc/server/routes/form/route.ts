@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, authenticatedProcedure, publicProcedure } from "../../trpc";
+import { router, authenticatedProcedure, publicProcedure, superAdminProcedure } from "../../trpc";
 import { generatePath } from "../../utils/path-generator";
 import { createFormInputModel, createFormOutputModel, listFormsOutputModel } from "./model";
 import {
@@ -24,13 +24,23 @@ import {
   dashboardAnalyticsOutputModel,
   updateVisibilityInputModel,
   updateVisibilityOutputModel,
-  listPublicFormsOutputModel
+  listPublicFormsOutputModel,
+  createReportInputModel,
+  createReportOutputModel,
+  updateReportStatusInputModel,
+  updateReportStatusOutputModel,
+  listReportsOutputModel,
+  hasReportedInputModel,
+  hasReportedOutputModel
 } from "./model";
 import FormService from "../../../../services/forms/index";
 import FormSubmissionService from "../../../../services/forms/form-submission/index";
 import FormFieldService from "../../../../services/forms/form-fields";
 import { getAuthenticationCookie } from "../../utils/cookies";
 import UserService from "@repo/services/user"
+
+
+import FormReportService from "@repo/services/form-reports";
 
 const TAGS = ["Forms"];
 const getPath = generatePath("/forms");
@@ -39,7 +49,9 @@ const formService = new FormService();
 const formFieldService = new FormFieldService();
 const formSubmissionService = new FormSubmissionService();
 const userService = new UserService()
+const reportService = new FormReportService();
 
+// console.log("listReportsOutputModel ==>",listReportsOutputModel);
 
 export const formRouter = router({
   createForm: authenticatedProcedure
@@ -269,6 +281,102 @@ export const formRouter = router({
   .query(async () => {
     return formService.listPublicForms();
   }),
+
+  createReport: authenticatedProcedure
+  .meta({
+    openapi: {
+      method: "POST",
+      path: getPath("/createReport"),
+      tags: TAGS,
+      protect: true,
+    },
+  })
+  .input(createReportInputModel)
+  .output(createReportOutputModel)
+  .mutation(async ({ input, ctx }) => {
+    return reportService.createReport({
+      formId: input.formId,
+      reportedBy: ctx.user.id,
+      reason: input.reason,
+      description: input.description,
+    });
+  }),
+
+  updateReportStatus: superAdminProcedure
+  .meta({
+    openapi: {
+      method: "POST",
+      path: getPath("/updateReportStatus"),
+      tags: TAGS,
+      protect: true,
+    },
+  })
+  .input(updateReportStatusInputModel)
+  .output(updateReportStatusOutputModel)
+  .mutation(async ({ input }) => {
+    return reportService.updateStatus(input);
+  }),
+
+
+listReports: superAdminProcedure
+  .meta({
+    openapi: {
+      method: "GET",
+      path: getPath("/listReports"),
+      tags: TAGS,
+      protect: true,
+    },
+  })
+  .output(listReportsOutputModel)
+  .query(async () => {
+  const reports =
+    await reportService.listReports();
+
+  return reports;
+}),
+
+hasReported: authenticatedProcedure
+  .meta({
+    openapi: {
+      method: "GET",
+      path: getPath("/hasReported"),
+      tags: TAGS,
+      protect: true,
+    },
+  })
+  .input(hasReportedInputModel)
+  .output(hasReportedOutputModel)
+  .query(async ({ input, ctx }) => {
+    return reportService.hasReported({
+      formId: input.formId,
+      userId: ctx.user.id,
+    });
+  }),
+
+  hideReportedForm: superAdminProcedure
+  .meta({
+    openapi: {
+      method: "POST",
+      path: getPath("/hideReportedForm"),
+      tags: TAGS,
+      protect: true,
+    },
+  })
+  .input(
+    z.object({
+      formId: z.string().uuid(),
+    })
+  )
+  .output(
+    z.object({
+      id: z.string().uuid(),
+    })
+  )
+  .mutation(async ({ input }) => {
+    return formService.hideReportedForm(input.formId);
+  }),
+
+
 
 
 });

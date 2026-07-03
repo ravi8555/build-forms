@@ -2,6 +2,7 @@ import { db, eq, asc, and, inArray,desc,count   } from "@repo/database";
 import { formsTable } from "@repo/database/models/form";
 import { formFieldsTable } from "@repo/database/models/form-fields";
 import { formSubmissionTable } from "@repo/database/models/form-submission";
+import { formReportsTable } from "@repo/database/models/form-report";
 import {
   type CreateFormInputType,
   createFormInput,
@@ -135,48 +136,7 @@ class FormService {
     };
   }
 
-  // public async publishForm(payload: { formId: string; userId: string }) {
-  //   const { formId, userId } = payload;
-
-  //   const result = await db
-  //     .update(formsTable)
-  //     .set({
-  //       isPublished: true,
-  //     })
-  //     .where(and(eq(formsTable.id, formId), eq(formsTable.createdBy, userId)))
-  //     .returning({
-  //       id: formsTable.id,
-  //     });
-
-  //   if (!result.length) {
-  //     throw new Error("Form not found");
-  //   }
-
-  //   return {
-  //     id: result[0]!.id,
-  //   };
-  // }
-  // public async unpublishForm(payload: { formId: string; userId: string }) {
-  //   const { formId, userId } = payload;
-
-  //   const result = await db
-  //     .update(formsTable)
-  //     .set({
-  //       isPublished: false,
-  //     })
-  //     .where(and(eq(formsTable.id, formId), eq(formsTable.createdBy, userId)))
-  //     .returning({
-  //       id: formsTable.id,
-  //     });
-
-  //   if (!result.length) {
-  //     throw new Error("Form not found");
-  //   }
-
-  //   return {
-  //     id: result[0]!.id,
-  //   };
-  // }
+  
 
   public async updateVisibility(payload: {
   formId: string;
@@ -306,6 +266,28 @@ public async listPublicForms() {
     )
     .orderBy(desc(formsTable.createdAt));
 }
+
+public async hideReportedForm(formId: string) {
+
+  const result = await db
+    .update(formsTable)
+    .set({
+      visibility: "DRAFT",
+    })
+    .where(eq(formsTable.id, formId))
+    .returning({
+      id: formsTable.id,
+    });
+
+  if (!result.length) {
+    throw new Error("Form not found");
+  }
+
+  return {
+    id: result[0]!.id,
+  };
+}
+
 
 
 }

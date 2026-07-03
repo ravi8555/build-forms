@@ -348,3 +348,122 @@ export const useListPublicForms = () => {
     refetch,
   }
 }
+
+// export function useCreateReport() {
+//   const utils = trpc.useUtils();
+
+//   const mutation =
+//     trpc.form.createReport.useMutation({
+//       onSuccess() {
+//         utils.form.invalidate();
+//       },
+//     });
+
+//   return {
+//     createReportAsync: mutation.mutateAsync,
+//     isLoading: mutation.isPending,
+//   };
+// }
+
+export function useListReports() {
+  const query =
+    trpc.form.listReports.useQuery();
+
+  return {
+    reports: query.data,
+    isLoading: query.isLoading,
+  };
+}
+
+
+export const useCreateReport = () => {
+  const utils = trpc.useUtils();
+
+  const {
+    mutateAsync: createReportAsync,
+    mutate: createReport,
+    isPending,
+    isSuccess,
+    error,
+  } = trpc.form.createReport.useMutation({
+    onSuccess: async () => {
+      await utils.form.listReports.invalidate();
+    },
+  });
+
+  return {
+    createReport,
+    createReportAsync,
+    isPending,
+    isSuccess,
+    error,
+  };
+};
+
+export const useHasReported = (
+  formId: string
+) => {
+
+  const query =
+    trpc.form.hasReported.useQuery(
+      { formId },
+      {
+        enabled: !!formId,
+      }
+    );
+
+  return {
+    hasReported:
+      query.data?.reported ?? false,
+
+    ...query,
+  };
+};
+
+
+export const useUpdateReportStatus = () => {
+  const utils = trpc.useUtils();
+
+  const mutation =
+    trpc.form.updateReportStatus.useMutation({
+      onSuccess: async () => {
+        await utils.form.listReports.invalidate();
+      },
+    });
+
+  return {
+    updateStatusAsync: mutation.mutateAsync,
+    updateStatus: mutation.mutate,
+    isPending: mutation.isPending,
+    status: mutation.status,
+    error: mutation.error,
+  };
+};
+
+export const useHideReportedForm = () => {
+
+  const utils = trpc.useUtils();
+
+  const mutation =
+    trpc.form.hideReportedForm.useMutation({
+
+      onSuccess: async () => {
+
+        await utils.form.listReports.invalidate();
+
+        await utils.form.listPublicForms.invalidate();
+
+      },
+
+    });
+
+  return {
+
+    hideReportedFormAsync:
+      mutation.mutateAsync,
+
+    ...mutation,
+
+  };
+
+};

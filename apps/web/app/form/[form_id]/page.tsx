@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { useGetForm, useSubmitForm } from "~/hooks/api/form";
+import { useGetForm, useSubmitForm, useHasReported } from "~/hooks/api/form";
+import { useUser } from "~/hooks/api/auth/";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
@@ -11,6 +12,8 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { FORM_THEMES } from "~/lib/form-themes";
+import ReportFormDialog from "~/components/forms/ReportFormDialog";
+// import ReportFormDialog from "~/components/ReportFormDialog";
 
 import { cn } from "~/lib/utils";
 
@@ -24,6 +27,8 @@ import Header from "~/components/Header";
 import Footer from "~/components/Footer";
 
 const Page = () => {
+  
+  const {user} = useUser()
   const { form_id } = useParams<{ form_id: string }>();
   const { theme, setTheme } = useTheme();
 
@@ -33,8 +38,10 @@ const Page = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [values, setValues] = useState<Record<string, any>>({});
+  const [openReport, setOpenReport] = useState(false);
 
   const isDark = theme === "dark";
+  const { hasReported } = useHasReported(form?.id ?? "");
 const themeConfig =
   FORM_THEMES[
     (form?.theme as keyof typeof FORM_THEMES)
@@ -268,7 +275,38 @@ case "RATING":
                       <p className="text-muted-foreground mt-3">
                         {form.description}
                       </p>
+
                     )}
+{/* <ReportFormDialog
+formId={form.id}
+/> */}
+
+
+{user && (
+
+hasReported ? (
+
+<Button
+    disabled
+    variant="secondary"
+>
+    ✓ Already Reported
+</Button>
+
+) : (
+
+<Button
+    type="button"
+    variant="outline"
+    className="text-red-500"
+    onClick={() => setOpenReport(true)}
+>
+    🚩 Report Form
+</Button>
+
+)
+
+)}             
                   </div>
 
                   <form
@@ -313,6 +351,15 @@ case "RATING":
                         ? "Submitting..."
                         : "Submit Form"}
                     </Button>
+
+                    {/* <Button
+        variant="outline"
+        className="text-red-500 border-red-500 hover:bg-red-50"
+        onClick={() => setOpenReport(true)}
+    >
+        🚩 Report Form
+    </Button> */}
+
                   </form>
                 </>
               )}
@@ -320,9 +367,15 @@ case "RATING":
          
       </Card>
     </div>
+    <ReportFormDialog
+    open={openReport}
+    onOpenChange={setOpenReport}
+    formId={form.id}
+/>
   </main>
 
   <Footer />
+  
 </>
 
 

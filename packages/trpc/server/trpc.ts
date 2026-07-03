@@ -26,13 +26,24 @@ export const authenticatedProcedure = tRPCContext.procedure.use(async options =>
 });
 
       
-    const {id} = await userService.verifyAndDecodedUserToken(userToken)
+    const {id, role} = await userService.verifyAndDecodedUserToken(userToken)
     
      
   return options.next({
     ctx :{
       ...ctx,
-      user : {id}
+      user : {id,role}
     }
   })
 })
+
+export const superAdminProcedure =
+  authenticatedProcedure.use(async ({ ctx, next }) => {
+    if (ctx.user.role !== "SUPER_ADMIN") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+      });
+    }
+
+    return next();
+  });

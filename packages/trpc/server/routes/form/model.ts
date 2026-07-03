@@ -245,5 +245,123 @@ export const listPublicFormsOutputModel = z.array(
 
 
 
+export const createReportInputModel =
+  z.object({
+    formId: z.string().uuid(),
+    reason: z.string(),
+    description: z.string().optional(),
+  });
+
+export const createReportOutputModel =
+  z.object({
+    id: z.string().uuid(),
+  });
+
+// export const listReportsOutputModel =
+//   z.array(
+//     z.object({
+//       id: z.string().uuid(),
+//       formId: z.string().uuid(),
+//       reportedBy: z.string().uuid(),
+//       reason: z.string(),
+//       description: z.string().nullable(),
+//       status: z.enum([
+//         "PENDING",
+//         "REVIEWED",
+//         "REJECTED",
+//       ]),
+//       createdAt: z.date().nullable(),
+//     })
+//   );
+export const reportStatusModel = z.enum([
+  "PENDING",
+  "REVIEWED",
+  "REJECTED",
+]);
+
+export type ReportStatusType = z.infer<typeof reportStatusModel>;
+
+export const updateReportStatusInputModel =
+  z.object({
+    reportId: z.string().uuid(),
+    status: z.enum([
+      "PENDING",
+      "REVIEWED",
+      "REJECTED",
+    ]),
+  });
+
+export const updateReportStatusOutputModel =
+  z.object({
+    id: z.string().uuid(),
+  });
+export const listReportsOutputModel = z.array(
+  z.object({
+    id: z.string().uuid(),
+
+    reason: z.string(),
+
+    description: z.string().nullable(),
+
+    status: reportStatusModel,
+
+    createdAt: z.date().nullable(),
+
+    form: z.object({
+      id: z.string().uuid().nullable(),
+      title: z.string().nullable(),
+      visibility: z.enum([
+        "DRAFT",
+        "PUBLIC",
+        "UNLISTED",
+      ]),
+    }),
+
+    reporter: z.object({
+      id: z.string().uuid(),
+      fullName: z.string(),
+      email: z.string().email(),
+    }),
+  })
+);
+//   export const listReportsOutputModel = z.array(
+//   z.object({
+//     id: z.string().uuid(),
+
+//     reason: z.string(),
+
+//     description: z.string().nullable(),
+
+//     status: reportStatusModel,
+
+//     createdAt: z.date().nullable(),
+
+//     form: z.object({
+//       id: z.string().uuid().nullable(),
+//       title: z.string().nullable(),
+//       visibility: z
+//         .enum(["PRIVATE", "PUBLIC"])
+//         .nullable(),
+//     }),
+
+//     reporter: z.object({
+//       id: z.string().uuid().nullable(),
+//       fullName: z.string().nullable(),
+//       email: z.string().nullable(),
+//     }),
+//   })
+// );
+
+export const hasReportedInputModel = z.object({
+  formId: z.string().uuid(),
+});
+
+export const hasReportedOutputModel = z.object({
+  reported: z.boolean(),
+});
+  
+
+
+
 
 

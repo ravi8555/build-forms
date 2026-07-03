@@ -60,22 +60,6 @@ app.use(
 //   "https://build-forms.onrender.com",
 // ];
 
-// app.use(
-//   cors({
-//     origin(origin, callback) {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         console.error("Blocked origin:", origin);
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     credentials: true,
-//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//   })
-// );
-
 app.use(cookieParser())
 
 app.use(express.json());
@@ -111,43 +95,6 @@ app.get("/api/auth/google", async (req, res) => {
   res.redirect(url);
 });
 
-// app.get(
-//   "/api/auth/google/callback",
-//   async (req, res) => {
-//     const code = req.query.code as string;
-
-//     const { tokens } =
-//       await googleOAuth2Client.getToken(code);
-
-//     googleOAuth2Client.setCredentials(tokens);
-
-//     const ticket =
-//       await googleOAuth2Client.verifyIdToken({
-//         idToken: tokens.id_token!,
-//         audience: env.GOOGLE_OAUTH_CLIENT_ID,
-//       });
-
-//     const payload = ticket.getPayload();
-
-//     if (!payload?.email) {
-//       return res
-//         .status(400)
-//         .json({ message: "Email not found" });
-//     }
-
-//     const email = payload.email;
-//     const fullName = payload.name ?? "";
-//     const profileImage =
-//       payload.picture ?? "";
-
-//     // create/login user here
-
-//     res.redirect(
-//       `${env.APP_URL}/dashboard`
-//     );
-//   }
-// );
-
 app.get(
   "/api/auth/google/callback",
   async (req, res) => {
@@ -174,11 +121,9 @@ app.get(
 
     const email = payload.email;
 
-    const fullName =
-      payload.name ?? "";
+    const fullName =  payload.name ?? "";
 
-    const profileImage =
-      payload.picture ?? "";
+    const profileImage =  payload.picture ?? "";
 
     // LOGIN / CREATE USER
     const user =
@@ -193,6 +138,7 @@ app.get(
     const { token } =
       await userService.generateUserToken({
         id: user.id,
+        role: user.role!,
       });
 
     // SET COOKIE

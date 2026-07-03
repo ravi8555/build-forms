@@ -4,15 +4,23 @@ import { z} from 'zod'
 
 export const createUserWithEmailAndPasswordInput = z.object({
   fullName: z.string().describe('Full name of user'),
+  // role:z.string().describe('role of user'),
   email : z.email().describe('email address of user'),
   password : z.string().describe('Passwrod of the user')
 })
 
 
 export type CreateUserWithEmailAndPasswordType = z.infer<typeof createUserWithEmailAndPasswordInput>
+export const userRoleModel = z.enum([
+  "USER",
+  "SUPER_ADMIN",
+]);
 
+export type UserRoleType =  z.infer<typeof userRoleModel>;
 export const generateUserTokenPayload = z.object({
   id: z.string().describe('uuid of user'),
+  role:userRoleModel
+  // role:z.string().describe('role of user'),
 }) 
 
 export type GenerateUserTokenPayloadType = z.infer<typeof generateUserTokenPayload>
@@ -58,3 +66,4 @@ export const googleOauthInput = z.object({
 
 export type GoogleOauthInputType =
   z.infer<typeof googleOauthInput>
+

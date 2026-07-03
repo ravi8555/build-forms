@@ -1,32 +1,3 @@
-// import { db } from "@repo/database";
-// import { usersTable } from "@repo/database/schema";
-// import { env } from "../env";
-// import { GetAuthenticationMethodOutputSchema } from "./model";
-
-// class UserService {
-    // public async getAuthenticationMethods(): Promise<
-    //   ReadonlyArray<GetAuthenticationMethodOutputSchema>
-    // > {
-    //     const supportedAuthenticationProviders: GetAuthenticationMethodOutputSchema[] = [];
-    
-    //     const isGoogleConfigured = !!(env.GOOGLE_OAUTH_CLIENT_ID && env.GOOGLE_OAUTH_CLIENT_SECRET);
-    
-    //     if (isGoogleConfigured) {
-    //         const url = googleOAuth2Client.generateAuthUrl();
-    //         supportedAuthenticationProviders.push({
-    //             provider: "GOOGLE_OAUTH",
-    //             displayName: "Google",
-    //             displayText: "Signin with Google",
-    //             authUrl: url,
-    //           });
-    //         }
-        
-    //         return supportedAuthenticationProviders;
-    //       }
-    //     }
-        
-        // export default UserService;
-
 import { googleOAuth2Client } from "../clients/google-oauth";
 
 import {randomBytes, createHmac} from 'node:crypto'
@@ -59,9 +30,9 @@ class UserService{
   }
 
   public async generateUserToken(payload:GenerateUserTokenPayloadType){
-   const {id} = await generateUserTokenPayload.parseAsync(payload)
+   const {id, role} = await generateUserTokenPayload.parseAsync(payload)
    const token = JWT.sign(
-  { id },
+  { id,role },
   env.JWT_SECRET,
   {
     expiresIn: "7d",
@@ -93,6 +64,7 @@ class UserService{
       id: usersTable.id,
       email : usersTable.email,
       fullName: usersTable.fullName,
+      role:usersTable.role,
       profileImageUrl: usersTable.profileImageUrl
     }).from(usersTable).where(eq(usersTable.id, id))
 
@@ -134,6 +106,7 @@ class UserService{
       fullName, 
       password:hash, 
       salt,
+      
       emailVerified: false,
       verificationToken,
       verificationTokenExpiry: expiry,
@@ -245,7 +218,7 @@ await EmailUtils.sendVerificationEmail(
   throw new Error("EMAIL_NOT_VERIFIED")
 }
 
-      const  {token} = await this.generateUserToken({id: exsitingUser.id})   
+      const  {token} = await this.generateUserToken({id: exsitingUser.id, role: exsitingUser.role,})   
 
       return{
         id: exsitingUser.id,
@@ -254,10 +227,9 @@ await EmailUtils.sendVerificationEmail(
   }
 
   public async verifyAndDecodedUserToken(token:string){
-    const {id} = await this.verifyUserToken(token)
-    // const userInfo = await this.getUserInfoById(id)
+    const {id, role} = await this.verifyUserToken(token)
     return {
-      id
+      id, role
     }
   }
 
@@ -365,6 +337,7 @@ public async loginWithGoogle(payload: GoogleOauthInputType) {
 
   return {
     id: existingUser.id,
+    role: existingUser.role
   };
   }
 
@@ -380,10 +353,12 @@ public async loginWithGoogle(payload: GoogleOauthInputType) {
   })
     .returning({
       id: usersTable.id,
+      role: usersTable.role,
     });
 
   return {
     id: insertedUser[0]!.id,
+    role: insertedUser[0]!.role,
   };
 }
 

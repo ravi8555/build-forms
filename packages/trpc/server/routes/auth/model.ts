@@ -23,6 +23,7 @@ export const getLoggedInUserInfoInputModel = z.undefined();
 export const getLoggedInUserInfoOutputModel = z.object({
    id: z.string().describe('id of user created'),
    email : z.email().describe('email address of user'),
+   role : z.string().describe('role of user'),
    fullName: z.string().describe('Full name of user'),
    profileImgUrl: z.string().describe('Profile image url of user').optional().nullable(),
 });

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Sun, Moon, LogOut } from "lucide-react";
 import { cn } from "~/lib/utils";
+import Image from "next/image";
 
 const Header = () => {
   const { user, id, isLoading } = useUser();
@@ -45,13 +46,19 @@ const Header = () => {
   
 
   return (
+
+    
     <header className="flex justify-between items-center px-8 py-4 bg-background shadow-sm border-b border-border">
       {/* Logo */}
 
+        
+
       <Link href="/" className="text-2xl font-bold text-[#55C96B]">
-      <img src="./logo.png" style={{width:"40px", height:"40px", display:"inline-flex"}} />
+      <img src="/logo.png" style={{width:"40px", height:"40px", display:"inline-flex"}} />
         BuildForms
       </Link>
+
+    
 
       {/* Navigation */}
       <nav className="flex items-center gap-6">
@@ -62,14 +69,14 @@ const Header = () => {
 >
   Explore
 </Link>
-       
 
-        <Link
-          href="/pricing"
-          className="text-foreground hover:text-[#55C96B] transition"
-        >
-          Pricing
-        </Link>
+       {user?.role === "SUPER_ADMIN" && (
+    <Link href="/admin/reports" className="text-foreground hover:text-[#55C96B] transition">
+        Reports
+    </Link>
+)}
+
+        
         
 
         {/* Logged in */}
@@ -95,37 +102,25 @@ const Header = () => {
             </button>
           </>
         ) : (
-          /* Logged out */
+          <>
+          <Link
+          href="/pricing"
+          className="text-foreground hover:text-[#55C96B] transition"
+        >
+          Pricing
+        </Link>
+         
           <Link
             href="/auth"
             className="text-foreground hover:text-[#55C96B] transition"
           >
             Start Free
           </Link>
+           </>
+          
         )}
 
-        {/* Theme Toggle */}
-        {/* <button
-          onClick={() => setTheme(isDark ? "light" : "dark")}
-          className="relative flex h-10 w-20 items-center rounded-full bg-muted border border-border px-1 transition"
-        >
-          <div
-            className={`absolute h-8 w-8 rounded-full bg-[#55C96B] transition-transform duration-300 ${
-              isDark ? "translate-x-10" : "translate-x-0"
-            }`}
-          />
-
-          <div className="relative z-10 flex w-full justify-between px-1">
-            <Moon
-              size={16}
-              className={isDark ? "text-white" : "text-muted-foreground"}
-            />
-            <Sun
-              size={16}
-              className={!isDark ? "text-white" : "text-muted-foreground"}
-            />
-          </div>
-        </button> */}
+       
         <button
   onClick={() => setTheme(isDark ? "light" : "dark")}
   className={cn(
