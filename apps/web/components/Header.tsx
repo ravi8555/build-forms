@@ -8,6 +8,7 @@ import { useTheme } from "next-themes";
 import { Sun, Moon, LogOut } from "lucide-react";
 import { cn } from "~/lib/utils";
 import Image from "next/image";
+import { Navbar } from "./Navbar";
 
 const Header = () => {
   const { user, id, isLoading } = useUser();
@@ -18,18 +19,13 @@ const Header = () => {
   const { theme, setTheme } = useTheme();
 
   const [mounted, setMounted] = useState(false);
+  //  if (!user) router.push("/login");
 
-  useEffect(() => {
+  useEffect(() => {  
+
     setMounted(true);
   }, []);
 
-  // useEffect(() => {
-  //   if (pathname !== "/") return;
-
-  //   if (id) {
-  //     router.replace("/dashboard");
-  //   }
-  // }, [id, pathname, router]);
 
   const handleLogout = async () => {
     try {
@@ -62,8 +58,13 @@ const Header = () => {
 
       {/* Navigation */}
       <nav className="flex items-center gap-6">
+        <Navbar 
+        user={user} 
+        isLoading={isLoading}
+        onLogout={handleLogout}
+        />
         
-<Link
+{/* <Link
   href="/explore"
   className="text-foreground hover:text-[#55C96B] transition"
 >
@@ -74,14 +75,14 @@ const Header = () => {
     <Link href="/admin/reports" className="text-foreground hover:text-[#55C96B] transition">
         Reports
     </Link>
-)}
+)} */}
 
         
         
 
         {/* Logged in */}
         
-        {!isLoading && id ? (
+        {/* {!isLoading && id ? (
           <>
            <Link
           href="/dashboard"
@@ -118,7 +119,7 @@ const Header = () => {
           </Link>
            </>
           
-        )}
+        )} */}
 
        
         <button

@@ -13,7 +13,10 @@ import Header from "~/components/Header"
 import { LoginForm } from "~/components/login-form"
 import { SignupForm } from "~/components/signup-form"
 import { useUser } from "~/hooks/api/auth";
+import { useEffect } from "react";
+
 import { Button } from "~/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const SSOButton = ({ provider, icon, onClick, label }:any) => {
   return (
@@ -62,8 +65,29 @@ const ORDivider = () => (
 );
 
 const page = () => {
-    const [activeTab, setActiveTab] = useState("signin");
-    const user = useUser(false)
+  
+  const [activeTab, setActiveTab] = useState("signin");
+
+//     const router = useRouter();
+//     const { user, isLoading } = useUser();
+
+// console.log({
+//   user,
+//   isLoading,
+// });
+//   useEffect(() => {
+//     if (!isLoading && user) {
+//       router.replace("/dashboard");
+//     }
+//   }, [user, isLoading, router]);
+
+//   if (isLoading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   if (user) {
+//     return null;
+//   }
   return (
 
     <>

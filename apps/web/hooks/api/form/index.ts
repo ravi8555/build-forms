@@ -284,21 +284,42 @@ export const useDeleteForm = () => {
   };
 };
 
-export const useDashboardAnalytics = () => {
-  const {
-    data,
-    error,
-    isLoading,
-    isError,
-    isSuccess,
-  } = trpc.form.getDashboardAnalytics.useQuery();
+// export const useDashboardAnalytics = () => {
+//   const {
+//     data,
+//     error,
+//     isLoading,
+//     isError,
+//     isSuccess,
+//   } = trpc.form.getDashboardAnalytics.useQuery();
+
+//   return {
+//     analytics: data,
+//     error,
+//     isLoading,
+//     isError,
+//     isSuccess,
+//   };
+// };
+
+export const useDashboardAnalytics = (
+  enabled = true
+) => {
+  const query =
+    trpc.form.getDashboardAnalytics.useQuery(
+      undefined,
+      {
+        enabled,
+        retry: false,
+      }
+    );
 
   return {
-    analytics: data,
-    error,
-    isLoading,
-    isError,
-    isSuccess,
+    analytics: query.data,
+    isLoading: query.isLoading,
+    error: query.error,
+    isError: query.isError,
+    isSuccess: query.isSuccess,
   };
 };
 export const useUpdateFormVisibility = () => {
