@@ -18,9 +18,10 @@ import {
 } from "~/components/ui/sidebar"
 import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon, LogOut, Form, ChartNoAxesCombined   } from "lucide-react"
 
-import {useUser, useLogout  } from "~/hooks/api/auth"
+import { useLogout  } from "~/hooks/api/auth"
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation"
+
 
 
 
@@ -149,14 +150,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 const { logoutAsync } = useLogout()
 const router = useRouter()
 
+
 const handleLogout = async () => {
   try {
-    await logoutAsync()
     router.replace("/auth")
+  setTimeout(async () => {
+    await logoutAsync();
+  }, 0);
+   
   } catch (error) {
     console.error(error)
   }
 }
+
+
+
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>

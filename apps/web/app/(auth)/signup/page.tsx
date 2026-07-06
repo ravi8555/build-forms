@@ -3,10 +3,9 @@
 import { SignupForm } from "~/components/signup-form"
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
-import { useUser } from "~/hooks/api/auth";
+
 
 export default function SignupPage() {
-  const user = useUser(true)
   
   return (
     <>

@@ -17,7 +17,7 @@ import {
 export default function ExplorePage() {
   const { forms, isLoading, isError } =
     useListPublicForms()
-    console.log(forms);   
+    // console.log(forms);   
 
     return (
     <div className="min-h-screen flex flex-col bg-background">

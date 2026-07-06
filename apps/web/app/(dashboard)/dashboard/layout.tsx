@@ -2,7 +2,10 @@ import ProtectedRoute from "~/app/ProtectedRoute"
 import { AppSidebar } from "~/components/app-sidebar"
 import { SiteHeader } from "~/components/site-header"
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar"
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { cn } from "~/lib/utils"
+import { AuthProvider } from "~/app/AuthProvider";
 interface SiteHeaderProps extends React.HTMLAttributes<HTMLElement> {
   // your other props
 }
@@ -40,10 +43,11 @@ export default function DashboardLayout({
 />
         <div className="flex flex-1 flex-col mt-5">
           <div className="@container/main flex flex-1 flex-col gap-2">
+           {/* <AuthProvider> */}
            <ProtectedRoute>          
             {children}
             </ProtectedRoute>
-            
+            {/* </AuthProvider> */}
           </div>
         </div>
       </SidebarInset>

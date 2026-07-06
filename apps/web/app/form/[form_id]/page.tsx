@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import { useGetForm, useSubmitForm, useHasReported } from "~/hooks/api/form";
-import { useUser } from "~/hooks/api/auth/";
+import { useAuth } from "~/app/AuthProvider";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
@@ -28,7 +28,7 @@ import Footer from "~/components/Footer";
 
 const Page = () => {
   
-  const {user} = useUser()
+  const {user} = useAuth()
   const { form_id } = useParams<{ form_id: string }>();
   const { theme, setTheme } = useTheme();
 

@@ -7,6 +7,7 @@ import {
   Globe,
   EyeOff,
   ClipboardList,
+  User,
 } from "lucide-react";
 
 import {
@@ -29,12 +30,12 @@ import {
 } from "recharts";
 
 import { useDashboardAnalytics } from "~/hooks/api/form";
-import { useRouter } from "next/navigation";
-import { useUser } from "~/hooks/api/auth";
-import ProtectedRoute from "~/app/ProtectedRoute";
+import { useAuth } from "~/app/AuthProvider";
+
 const COLORS = ["#55C96B", "#f59e0b", "#3b82f6"];
 
 export default function AnalyticsPage() {
+  const { user } = useAuth();
   const { analytics, isLoading:analyticIsLoading } = useDashboardAnalytics();
 
    if (analyticIsLoading) {

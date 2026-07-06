@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useUser, useLogout } from "~/hooks/api/auth";
+import { useLogout } from "~/hooks/api/auth";
+import { useAuth } from "~/app/AuthProvider";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Sun, Moon, LogOut } from "lucide-react";
@@ -11,8 +12,9 @@ import Image from "next/image";
 import { Navbar } from "./Navbar";
 
 const Header = () => {
-  const { user, id, isLoading } = useUser();
+  const { user, isLoading } = useAuth();
   const { logoutAsync } = useLogout();
+  
 
   const router = useRouter();
   const pathname = usePathname();
@@ -26,15 +28,26 @@ const Header = () => {
     setMounted(true);
   }, []);
 
+  // const handleLogout = async () => {
+  //   try {
+  //     await logoutAsync();
+  //     router.replace("/auth");
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const handleLogout = async () => {
-    try {
-      await logoutAsync();
-      router.replace("/auth");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    router.replace("/auth")
+  setTimeout(async () => {
+    await logoutAsync();
+  }, 0);
+   
+  } catch (error) {
+    console.error(error)
+  }
+}
 
   if (!mounted) return null;
 

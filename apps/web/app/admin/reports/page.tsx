@@ -1,6 +1,7 @@
 "use client";
 // app/admin/reports/page.tsx
-import { useUser, useLogout } from "~/hooks/api/auth";
+
+import {useAuth} from "~/app/AuthProvider";
 
 
 import Header from "~/components/Header";
@@ -12,9 +13,11 @@ import { useListReports,useUpdateReportStatus, useHideReportedForm } from "~/hoo
 
 export default function ReportsPage() {
 const {hideReportedFormAsync,} = useHideReportedForm();  
-const { user, id, isLoading } = useUser();
+
+const { user, isLoading } = useAuth();
 const { reports, isLoading: reportsLoading, } = useListReports();
 const { updateStatusAsync } =   useUpdateReportStatus();
+
 if (!isLoading && user?.role !== "SUPER_ADMIN") {
     return (
         <div className="flex items-center justify-center h-screen">

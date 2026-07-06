@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
+
 import { useRouter } from "next/navigation";
 
 import { LoadingSpinner } from "~/components/LoadingSpinner";
 
 import { useAuth } from "~/app/AuthProvider";
 
-export default function ProtectedRoute({
+export default function GuestRoute({
     children,
 }:{
     children:React.ReactNode;
@@ -22,8 +23,10 @@ export default function ProtectedRoute({
 
     useEffect(()=>{
 
-        if(!isLoading && !user){
-            router.replace("/auth");
+        if(!isLoading && user){
+
+            router.replace("/dashboard");
+
         }
 
     },[
@@ -33,11 +36,15 @@ export default function ProtectedRoute({
     ]);
 
     if(isLoading){
+
         return <LoadingSpinner/>
+
     }
 
-    if(!user){
+    if(user){
+
         return null;
+
     }
 
     return <>{children}</>;

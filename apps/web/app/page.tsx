@@ -3,7 +3,6 @@
 import React,{useState} from "react";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
-import { useUser } from "~/hooks/api/auth";
 import { ThemeCard } from'../components/themeCard';
 import {ThemePreview} from '../components/themePreview'
 import { AlignCenter, GitBranch} from "lucide-react";
@@ -41,14 +40,12 @@ type Props = {
   isActive: boolean;
   onClick: () => void;
 };
-  // const { user, id, isLoading } = useUser();
+ 
   const [selectedTheme, setSelectedTheme] =
   useState<(typeof themes)[number]>(
     themes[0]!
   );
 
-
-const user = useUser(false)  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />

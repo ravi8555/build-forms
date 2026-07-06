@@ -2,11 +2,10 @@
 
 import Footer from "~/components/Footer"
 import Header from "~/components/Header"
-import { LoginForm } from "~/components/login-form"
-import { useUser } from "~/hooks/api/auth";
+
 
 export default function Page() {
-  const user = useUser(false)
+  
   return (
     <>
 

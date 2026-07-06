@@ -3,10 +3,9 @@
 import React, { useState } from "react";
 import Header from "~/components/Header";
 import Footer from "~/components/Footer"
-import { useUser } from "~/hooks/api/auth";
+
 import {Pricing}  from "~/components/priceTable";
 const PricingPage = () => {
-  const user = useUser(false)
   
   const [plan, setPlan] = useState<"monthly" | "annual" | "perpetual">("monthly");
 

@@ -1,6 +1,6 @@
 "use client";
 
-import GuestRoute from "./GuestRoute";
+import GuestRoute from "../GuestRoute";
 
 export default function AuthLayout({
   children,
