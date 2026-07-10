@@ -1,8 +1,6 @@
 "use client";
 // app/admin/reports/page.tsx
 
-import {useAuth} from "~/app/AuthProvider";
-
 
 import Header from "~/components/Header";
 import Footer from "~/components/Footer";
@@ -10,12 +8,15 @@ import ReportCard from "~/components/admin/ReportCard"
 
 import { toast } from "sonner";
 import { useListReports,useUpdateReportStatus, useHideReportedForm } from "~/hooks/api/form";
-
+import { useAuth } from "~/app/AuthProvider"
 export default function ReportsPage() {
+          
 const {hideReportedFormAsync,} = useHideReportedForm();  
 
 const { user, isLoading } = useAuth();
-const { reports, isLoading: reportsLoading, } = useListReports();
+// const { reports, isLoading: reportsLoading, } = useListReports();
+
+const { reports } =  useListReports(!!user && !isLoading);
 const { updateStatusAsync } =   useUpdateReportStatus();
 
 if (!isLoading && user?.role !== "SUPER_ADMIN") {

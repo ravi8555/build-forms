@@ -6,6 +6,8 @@ import { publicProcedure, router } from "../../trpc";
 import { generatePath } from "../../utils/path-generator";
 import { getAuthenticationCookie, setAuthenticationCookie, clearAuthenticationCookie } from "../../utils/cookies";
 import { authenticatedProcedure } from "../../trpc";
+import {checkRateLimit} from "@repo/services/utils/check-rate-limit"
+import {loginLimiter, registerLimiter, forgotPasswordLimiter, reportLimiter} from "@repo/services/utils/rate-limit"
 import {
   forgotPasswordInput,
   resetPasswordInput,
@@ -28,7 +30,10 @@ export const authRouter = router({
   .mutation(async ({ input, ctx }) => {
   try {
     const { fullName, email, password } = input;
-
+await checkRateLimit(
+    registerLimiter,
+    email
+);
     const { id }  =
       await userService.createUserWithEmailAndPassword({
         fullName,
@@ -46,23 +51,11 @@ export const authRouter = router({
         message: error.message,
       });
     }
+    
 
     throw error;
   }
 }),
-  // .mutation( async ({input, ctx})=>{
-  //   const {fullName, email, password} = input
-
-  //   const {id} = await userService.createUserWithEmailAndPassword({
-  //     fullName, email, password
-  //   })
-
-  //   // setAuthenticationCookie(ctx, token)
-
-  //   return{
-  //     id
-  //   }
-  // }),
 
   signInwithEmailAndPassword: publicProcedure.meta({openapi:{
     method:'POST',
@@ -71,21 +64,34 @@ export const authRouter = router({
   })
   .input(signInUserWithEmailAndPasswordInputModel)
   .output(signInUserWithEmailAndPasswordOutputModel)
-  .mutation( async ({input, ctx})=>{
+  .mutation(async ({ input, ctx }) => {
+  try {
+    const { email, password } = input;
 
-    const { email, password} = input
-    const {id, token} = await userService.signInUserWithEmailAndPassword({
-      email, password
-    })
+    await checkRateLimit(loginLimiter, email);
 
-    setAuthenticationCookie(ctx, token)
+    const { id, token } =
+      await userService.signInUserWithEmailAndPassword({
+        email,
+        password,
+      });
 
-    return{
-      id
-    }
+    setAuthenticationCookie(ctx, token);
 
-
-  }),
+    return { id };
+  } catch (err:any) {
+    console.error(err);
+    if (err.message === "RATE_LIMIT_EXCEEDED.") {
+      console.log(err.message)
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "Too many requests. Please try again later.",
+      });
+  }
+    
+    throw err;
+  }
+}),
 
   getLoggedInUserInfo : authenticatedProcedure
   .meta({openapi:{
@@ -169,6 +175,10 @@ export const authRouter = router({
   .input(forgotPasswordInput)
   .output(forgotPasswordOutputModel)
   .mutation(async ({ input }) => {
+    await checkRateLimit(
+    forgotPasswordLimiter,
+    input.email
+);
     return userService.forgotPassword(input)
   }),
 

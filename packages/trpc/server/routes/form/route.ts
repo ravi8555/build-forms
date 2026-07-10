@@ -33,11 +33,13 @@ import {
   hasReportedInputModel,
   hasReportedOutputModel
 } from "./model";
-import FormService from "../../../../services/forms/index";
-import FormSubmissionService from "../../../../services/forms/form-submission/index";
-import FormFieldService from "../../../../services/forms/form-fields";
+import FormService from "@repo/services/forms/index";
+import FormSubmissionService from "@repo/services/forms/form-submission/index";
+import FormFieldService from "@repo/services/forms/form-fields";
 import { getAuthenticationCookie } from "../../utils/cookies";
 import UserService from "@repo/services/user"
+import {checkRateLimit} from "@repo/services/utils/check-rate-limit"
+import { reportLimiter} from "@repo/services/utils/rate-limit"
 
 
 import FormReportService from "@repo/services/form-reports";
@@ -294,12 +296,18 @@ export const formRouter = router({
   .input(createReportInputModel)
   .output(createReportOutputModel)
   .mutation(async ({ input, ctx }) => {
-    return reportService.createReport({
+    await checkRateLimit(
+    reportLimiter,
+    ctx.user.id
+  );
+      return reportService.createReport({
       formId: input.formId,
       reportedBy: ctx.user.id,
       reason: input.reason,
       description: input.description,
     });
+    
+
   }),
 
   updateReportStatus: superAdminProcedure

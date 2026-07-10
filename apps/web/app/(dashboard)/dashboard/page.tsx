@@ -14,9 +14,13 @@ import {
   Tooltip,
 } from "recharts"
 import { useDashboardAnalytics } from "~/hooks/api/form"
+import { useAuth } from "~/app/AuthProvider"
 
 export default function DashboardPage() {
-  const { analytics, isLoading } = useDashboardAnalytics()
+  // const { analytics, isLoading } = useDashboardAnalytics()
+  const { user, isLoading } = useAuth();
+
+  const { analytics } =  useDashboardAnalytics(!!user && !isLoading);
 
   if (isLoading) {
     return (

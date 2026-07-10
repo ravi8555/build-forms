@@ -34,31 +34,49 @@ export const useCreateForm = () => {
     };
 }
 
-export const useListForms = () => {
-  const {
-    data: forms,
-    error,
-    isError,
-    isFetched,
-    isFetching,
-    isLoading,
-    status,
-    refetch,
-  } = trpc.form.listForms.useQuery();  
-  // } = trpc.form.listForms.useQuery(undefined, {
-  //   // Optional: you can configure staleTime, cacheTime, etc.
-  //   staleTime: 1000 * 60, // 1 minute
-  // });
+// export const useListForms = () => {
+//   const {
+//     data: forms,
+//     error,
+//     isError,
+//     isFetched,
+//     isFetching,
+//     isLoading,
+//     status,
+//     refetch,
+//   } = trpc.form.listForms.useQuery();  
+//   // } = trpc.form.listForms.useQuery(undefined, {
+//   //   // Optional: you can configure staleTime, cacheTime, etc.
+//   //   staleTime: 1000 * 60, // 1 minute
+//   // });
+
+//   return {
+//     forms,
+//     error,
+//     isError,
+//     isFetched,
+//     isFetching,
+//     isLoading,
+//     status,
+//     refetch,
+//   };
+// };
+
+export const useListForms = (enabled = true) => {
+  const query = trpc.form.listForms.useQuery(undefined, {
+    enabled,
+    retry: false,
+  });
 
   return {
-    forms,
-    error,
-    isError,
-    isFetched,
-    isFetching,
-    isLoading,
-    status,
-    refetch,
+    forms: query.data,
+    error: query.error,
+    isError: query.isError,
+    isFetched: query.isFetched,
+    isFetching: query.isFetching,
+    isLoading: query.isLoading,
+    status: query.status,
+    refetch: query.refetch,
   };
 };
 
@@ -151,65 +169,125 @@ export const useDeleteField = () => {
 };
 
 // ✅ Get Field Hook
-export const useGetField = (fieldId: string) => {
-  const {
-    data: field,
-    error,
-    isError,
-    isFetched,
-    isFetching,
-    isLoading,
-    status,
-    refetch,
-  } = trpc.form.getField.useQuery({ fieldId });
+// export const useGetField = (fieldId: string) => {
+//   const {
+//     data: field,
+//     error,
+//     isError,
+//     isFetched,
+//     isFetching,
+//     isLoading,
+//     status,
+//     refetch,
+//   } = trpc.form.getField.useQuery({ fieldId });
+
+//   return {
+//     field,
+//     error,
+//     isError,
+//     isFetched,
+//     isFetching,
+//     isLoading,
+//     status,
+//     refetch,
+//   };
+// };
+
+export const useGetField = (
+  fieldId: string,
+  enabled = true
+) => {
+  const query = trpc.form.getField.useQuery(
+    { fieldId },
+    {
+      enabled: enabled && !!fieldId,
+      retry: false,
+    }
+  );
 
   return {
-    field,
-    error,
-    isError,
-    isFetched,
-    isFetching,
-    isLoading,
-    status,
-    refetch,
+    field: query.data,
+    error: query.error,
+    isError: query.isError,
+    isFetched: query.isFetched,
+    isFetching: query.isFetching,
+    isLoading: query.isLoading,
+    status: query.status,
+    refetch: query.refetch,
   };
 };
 
-export const useListFields = (formId: string) => {
-  const {
-    data: fields,
-    error,
-    isError,
-    isFetched,    
-    isFetching,
-    isLoading,
-    status,
-    refetch,
-  } = trpc.form.listFields.useQuery({ formId });
+// export const useListFields = (formId: string) => {
+//   const {
+//     data: fields,
+//     error,
+//     isError,
+//     isFetched,    
+//     isFetching,
+//     isLoading,
+//     status,
+//     refetch,
+//   } = trpc.form.listFields.useQuery({ formId });
+
+//   return {
+//     fields,
+//     error,
+//     isError,
+//     isFetched,
+//     isFetching,
+//     isLoading,
+//     status,
+//     refetch,
+//   };
+// };
+
+export const useListFields = (
+  formId: string,
+  enabled = true
+) => {
+  const query = trpc.form.listFields.useQuery(
+    { formId },
+    {
+      enabled: enabled && !!formId,
+      retry: false,
+    }
+  );
 
   return {
-    fields,
-    error,
-    isError,
-    isFetched,
-    isFetching,
-    isLoading,
-    status,
-    refetch,
+    fields: query.data,
+    error: query.error,
+    isError: query.isError,
+    isFetched: query.isFetched,
+    isFetching: query.isFetching,
+    isLoading: query.isLoading,
+    status: query.status,
+    refetch: query.refetch,
   };
 };
 
 export const useGetForm = (formId: string) => {
-  const { data: form, error, isFetched, isFetching, isLoading, status } =
-    trpc.form.getForm.useQuery({ formId });
+  // const { data: form, error, isFetched, isFetching, isLoading, status } =
+    const query = trpc.form.getForm.useQuery({ formId },
+      // new added
+      {
+        enabled: !!formId,
+      retry: false,
+      }
+    );
 
   return {
-    form,
-    error,
-    isFetched,
-    isFetching,
-    isLoading,
-    status,
+    // form,
+    // error,
+    // isFetched,
+    // isFetching,
+    // isLoading,
+    // status,
+     form: query.data,
+    error: query.error,
+    isFetched: query.isFetched,
+    isFetching: query.isFetching,
+    isLoading: query.isLoading,
+    status: query.status,
   };
 };
 export const useSubmitForm = () => {
@@ -236,26 +314,47 @@ export const useSubmitForm = () => {
   };
 };
 
-export const useGetFormSubmissions = (formId: string) => {
-  const {
-    data: submissions,
-    error,
-    isLoading,
-    isError,
-    isSuccess,
-    refetch,
-  } = trpc.form.getFormSubmissions.useQuery({ formId });
+// export const useGetFormSubmissions = (formId: string) => {
+//   const {
+//     data: submissions,
+//     error,
+//     isLoading,
+//     isError,
+//     isSuccess,
+//     refetch,
+//   } = trpc.form.getFormSubmissions.useQuery({ formId });
+
+//   return {
+//     submissions,
+//     error,
+//     isLoading,
+//     isError,
+//     isSuccess,
+//     refetch,
+//   };
+// };
+export const useGetFormSubmissions = (
+  formId: string,
+  enabled = true
+) => {
+  const query =
+    trpc.form.getFormSubmissions.useQuery(
+      { formId },
+      {
+        enabled,
+        retry: false,
+      }
+    );
 
   return {
-    submissions,
-    error,
-    isLoading,
-    isError,
-    isSuccess,
-    refetch,
+    submissions: query.data,
+    error: query.error,
+    isLoading: query.isLoading,
+    isError: query.isError,
+    isSuccess: query.isSuccess,
+    refetch: query.refetch,
   };
 };
-
 export const useDeleteForm = () => {
   const utils = trpc.useUtils();
 
@@ -369,33 +468,27 @@ export const useListPublicForms = () => {
     refetch,
   }
 }
-
-// export function useCreateReport() {
-//   const utils = trpc.useUtils();
-
-//   const mutation =
-//     trpc.form.createReport.useMutation({
-//       onSuccess() {
-//         utils.form.invalidate();
-//       },
-//     });
+// export function useListReports() {
+//   const query =
+//     trpc.form.listReports.useQuery();
 
 //   return {
-//     createReportAsync: mutation.mutateAsync,
-//     isLoading: mutation.isPending,
+//     reports: query.data,
+//     isLoading: query.isLoading,
 //   };
 // }
 
-export function useListReports() {
-  const query =
-    trpc.form.listReports.useQuery();
+export function useListReports(enabled = true) {
+  const query = trpc.form.listReports.useQuery(undefined, {
+    enabled,
+    retry: false,
+  });
 
   return {
     reports: query.data,
     isLoading: query.isLoading,
   };
 }
-
 
 export const useCreateReport = () => {
   const utils = trpc.useUtils();

@@ -35,11 +35,13 @@ import {
 
 import { useSnackbar } from 'notistack';
 import CreateFormDailog from "~/components/Create-Form-Dailog";
+import { useAuth } from "~/app/AuthProvider"
 
 export default function FormsPage() {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { user, isLoading } = useAuth();
   
-  const { forms, isLoading } = useListForms();
+  // const { forms, isLoading } = useListForms();
+  const { forms } =  useListForms(!!user && !isLoading);
   
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<

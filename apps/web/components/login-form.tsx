@@ -24,6 +24,7 @@ import { trpc } from "~/trpc/client";
 import Link from "next/link";
 import { useState } from "react";
 
+
 type LoginFormData = {
   email: string;
   password: string;
@@ -69,6 +70,10 @@ export function LoginForm({
         setLoginEmail(data.email);
         setShowVerifyPopup(true);
         return;
+      }
+      if(error.message.includes("RATE_LIMIT_EXCEEDED")){
+       setServerError("Too many login attempts. Please wait 1 minute.")
+       return      
       }
 
       setServerError("Invalid email or password");
