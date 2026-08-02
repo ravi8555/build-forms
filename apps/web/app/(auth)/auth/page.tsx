@@ -1,6 +1,7 @@
 "use client"
 
 import React,{useState} from 'react'
+
 import {
   Tabs,
   TabsContent,
@@ -141,7 +142,7 @@ const page = () => {
                     variant="outline"
                     className="flex h-12 w-full items-center justify-center gap-3 rounded-md border-gray-300 bg-white hover:bg-gray-50 mt-0"
                     onClick={() => {
-                      window.location.href = `${process.env.BASE_URL}/api/auth/google`;
+                      window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google`;
                     }}
                   >
                     <GoogleIcon />

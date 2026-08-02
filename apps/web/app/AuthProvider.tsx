@@ -17,9 +17,9 @@ const pathname = usePathname();
 
 const shouldFetchUser =
   pathname.startsWith("/dashboard") ||
-  pathname.startsWith("/admin") ||
-  pathname.startsWith("/auth");
-  const auth = useUser();
+  pathname.startsWith("/admin") ;
+  // pathname.startsWith("/auth");
+  // const auth = useUser();
   
   const query = useUser(shouldFetchUser);
 

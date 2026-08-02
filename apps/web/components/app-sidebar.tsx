@@ -153,10 +153,10 @@ const router = useRouter()
 
 const handleLogout = async () => {
   try {
-    router.replace("/auth")
-  setTimeout(async () => {
     await logoutAsync();
-  }, 0);
+    router.replace("/auth")
+  // setTimeout(async () => {
+  // }, 0);
    
   } catch (error) {
     console.error(error)
