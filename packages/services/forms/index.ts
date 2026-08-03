@@ -73,6 +73,7 @@ class FormService {
           type: formFieldsTable.type,
           description: formFieldsTable.description,
           placeholder: formFieldsTable.placeholder,
+          options: formFieldsTable.options,
           isRequired: formFieldsTable.isRequired,
           index: formFieldsTable.index,
         },

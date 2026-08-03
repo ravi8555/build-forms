@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 // Enum for field types
-export const fieldTypeEnum = z.enum(["TEXT", "NUMBER", "EMAIL", "YES_NO", "PASSWORD","RATING"])
+export const fieldTypeEnum = z.enum(["TEXT", "NUMBER", "EMAIL", "YES_NO", "PASSWORD","RATING","OPTION"])
 
 // ✅ Create Field Input
 export const createFieldInput = z.object({
@@ -10,6 +10,7 @@ export const createFieldInput = z.object({
   formId: z.string().uuid().describe("UUID of the form this field belongs to"),
   description: z.string().optional().describe("Helper text shown below the field"),
   placeholder: z.string().optional().describe("Placeholder text for the field"),
+  options: z.array(z.string()).optional().describe("Choose multiple options"),
   isRequired: z.boolean().optional().default(false).describe("Whether the field is required"),
   // index: z.string().describe("Fractional index for sorting fields"),
   // labelKey: z.string().max(100).describe("Immutable slug version of label"),
@@ -24,8 +25,9 @@ export const updateFieldInput = z.object({
   type: fieldTypeEnum.optional().describe("Updated field type"),
   description: z.string().optional().nullable().describe("Updated helper text"),
   placeholder: z.string().optional().nullable().describe("Updated placeholder text"),
+  options: z.array(z.string()).optional().describe("Choose multiple options"),
   isRequired: z.boolean().optional().describe("Updated required flag"),
-  index: z.string().optional().describe("Updated fractional index"),
+    index: z.string().optional().describe("Updated fractional index"),
 })
 
 export type UpdateFieldInputType = z.infer<typeof updateFieldInput>
@@ -52,6 +54,7 @@ export const getFieldOutputModel = z.object({
   type: fieldTypeEnum,
   description: z.string().nullable().optional(),
   placeholder: z.string().nullable().optional(),
+  options: z.array(z.string()).nullable().optional(),
   isRequired: z.boolean(),
   index: z.string(),
   createdAt: z.date().nullable(),

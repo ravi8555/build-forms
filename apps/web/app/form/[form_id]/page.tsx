@@ -13,6 +13,8 @@ import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { FORM_THEMES } from "~/lib/form-themes";
 import ReportFormDialog from "~/components/forms/ReportFormDialog";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
+import { Label } from "~/components/ui/label"; 
 // import ReportFormDialog from "~/components/ReportFormDialog";
 
 import { cn } from "~/lib/utils";
@@ -39,6 +41,7 @@ const Page = () => {
   const [submitting, setSubmitting] = useState(false);
   const [values, setValues] = useState<Record<string, any>>({});
   const [openReport, setOpenReport] = useState(false);
+  
 
   const isDark = theme === "dark";
   const { hasReported } = useHasReported(form?.id ?? "");
@@ -125,7 +128,7 @@ const themeConfig =
 
       case "NUMBER":
         return (
-          <Input
+          <Input  
             type="number"
             placeholder={field.placeholder ?? ""}
             value={values[field.labelKey] ?? ""}
@@ -174,9 +177,37 @@ case "RATING":
       ))}
     </div>
   );
+
+ case "OPTION":
+  return (
+    <RadioGroup
+      value={values[field.labelKey] ?? ""}
+      onValueChange={(value) =>
+        handleChange(field.labelKey, value)
+      }
+    >
+      {field.options?.map((option: string) => (
+        <div
+          key={option}
+          className="flex items-center space-x-2"
+        >
+          <RadioGroupItem
+            value={option}
+            id={`${field.id}-${option}`}
+          />
+
+          <Label htmlFor={`${field.id}-${option}`}>
+            {option}
+          </Label>
+        </div>
+      ))}
+    </RadioGroup>
+  );
       default:
         return null;
     }
+
+    
   };
 
   if (isLoading) {

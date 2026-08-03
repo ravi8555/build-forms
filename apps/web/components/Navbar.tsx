@@ -179,16 +179,18 @@ interface NavbarProps {
 
 export function Navbar({ user, isLoading, onLogout }: NavbarProps) {
   return (
+    
     <div className="flex items-center gap-6">
+      
       {/* Desktop Navigation - hidden on mobile */}
       <div className="hidden md:flex items-center gap-6">
         <Link
           href="/explore"
           className="text-foreground hover:text-[#55C96B] transition"
-        >
+          >
           Explore
         </Link>
-
+       
         {user?.role === "SUPER_ADMIN" && (
           <Link
             href="/admin/reports"
@@ -303,5 +305,30 @@ export function Navbar({ user, isLoading, onLogout }: NavbarProps) {
         </SheetContent>
       </Sheet>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   );
 }
