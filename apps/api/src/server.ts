@@ -25,40 +25,44 @@ const openApiDocument = generateOpenApiDocument(serverRouter, {
 });
 
 // Server
+// Server
 const allowedOrigins =
   env.NODE_ENV === "production"
     ? [
         "https://buildforms.in",
         "https://www.buildforms.in",
-        "https://build-forms.onrender.com",
+        "https://api.buildforms.in",
       ]
     : [
         "http://localhost:3030",
         "http://localhost:8000",
       ];
 
+console.log("NODE_ENV =", env.NODE_ENV);
+console.log("Allowed Origins =", allowedOrigins);
+
+
+
+
 app.use(
   cors({
     origin(origin, callback) {
+      logger.info(`Incoming Origin: ${origin}`);
+
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.error("Blocked by CORS:", origin);
-        callback(new Error("Not allowed by CORS"));
+        return callback(null, true);
       }
+
+      logger.error(`Blocked by CORS: ${origin}`);
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   }),
 );
 
+
 // // // Local
 
-// const allowedOrigins = [
-//   "http://localhost:3030",
-//   "https://buildforms.in",
-//   "https://www.buildforms.in",
-//   "https://build-forms.onrender.com",
-// ];
 
 app.use(cookieParser())
 
