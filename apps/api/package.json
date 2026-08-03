@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "dotenv -- node dist/index.js",
     "dev": "dotenv -- tsx watch ./src/index.ts",
     "build": "tsup",
     "lint": "eslint src/*"
@@ -29,6 +29,7 @@
     "@trpc/server": "^11.8.1",
     "cookies-parser": "^1.2.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "trpc-to-openapi": "^3.1.0",
     "zod": "^4.3.5"
