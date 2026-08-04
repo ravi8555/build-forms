@@ -36,6 +36,7 @@ import {
 import { useSnackbar } from 'notistack';
 import CreateFormDailog from "~/components/Create-Form-Dailog";
 import { useAuth } from "~/app/AuthProvider"
+import { LoadingSpinner } from "~/components/LoadingSpinner";
 
 export default function FormsPage() {
   const { user, isLoading } = useAuth();
@@ -56,7 +57,7 @@ export default function FormsPage() {
         ?.toLowerCase()
         .includes(search.toLowerCase());
 
-      const matchesFilter =
+      const matchesFilter = 
         filter === "ALL" ? true : form.visibility === filter;
 
       return matchesSearch && matchesFilter;
@@ -67,6 +68,7 @@ export default function FormsPage() {
     return (
       <div className="p-6 text-muted-foreground">
         Loading forms...
+        <LoadingSpinner />
       </div>
     );
   }

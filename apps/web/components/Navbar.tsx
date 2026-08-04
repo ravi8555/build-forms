@@ -307,28 +307,5 @@ export function Navbar({ user, isLoading, onLogout }: NavbarProps) {
     </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   );
 }
