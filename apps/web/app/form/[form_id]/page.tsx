@@ -15,7 +15,8 @@ import { FORM_THEMES } from "~/lib/form-themes";
 import ReportFormDialog from "~/components/forms/ReportFormDialog";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Label } from "~/components/ui/label"; 
-// import ReportFormDialog from "~/components/ReportFormDialog";
+import { RatingField } from "~/components/RatingField";
+
 
 import { cn } from "~/lib/utils";
 
@@ -42,7 +43,6 @@ const Page = () => {
   const [values, setValues] = useState<Record<string, any>>({});
   const [openReport, setOpenReport] = useState(false);
   
-
   const isDark = theme === "dark";
   const { hasReported } = useHasReported(form?.id ?? "");
 const themeConfig =
@@ -87,6 +87,7 @@ const themeConfig =
   };
 
   const renderField = (field: any) => {
+   
     switch (field.type) {
       case "TEXT":
         return (
@@ -136,7 +137,7 @@ const themeConfig =
               handleChange(field.labelKey, e.target.value)
             }
             required={field.isRequired}
-          />
+          /> 
         );
 
       case "YES_NO":
@@ -153,29 +154,40 @@ const themeConfig =
             </span>
           </div>
         );
+// case "RATING":
+//   return (
+//     <div className="flex gap-2 text-3xl">
+//       {[1,2,3,4,5].map((star) => (
+//         <button
+//           type="button"
+//           key={star}
+//           onClick={() =>
+//             handleChange(
+//               field.labelKey,
+//               star
+//             )
+//           }
+//           className={
+//             (values[field.labelKey] ?? 0) >= star
+//               ? "text-yellow-400"
+//               : "text-gray-500"
+//           }
+//         >
+//           ★
+//         </button>
+//       ))}
+//     </div>
+//   );
+
 case "RATING":
   return (
-    <div className="flex gap-2 text-3xl">
-      {[1,2,3,4,5].map((star) => (
-        <button
-          type="button"
-          key={star}
-          onClick={() =>
-            handleChange(
-              field.labelKey,
-              star
-            )
-          }
-          className={
-            (values[field.labelKey] ?? 0) >= star
-              ? "text-yellow-400"
-              : "text-gray-500"
-          }
-        >
-          ★
-        </button>
-      ))}
-    </div>
+    <RatingField
+      theme={form?.theme ?? "DEFAULT"}
+      value={values[field.labelKey] ?? 0}
+      onChange={(rating) =>
+        handleChange(field.labelKey, rating)
+      }
+    />
   );
 
  case "OPTION":
@@ -209,6 +221,8 @@ case "RATING":
 
     
   };
+
+
 
   if (isLoading) {
     return (

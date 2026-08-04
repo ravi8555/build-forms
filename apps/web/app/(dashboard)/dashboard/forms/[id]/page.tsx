@@ -73,6 +73,8 @@ export default function FormBuilderPage() {
   const [isRequired, setIsRequired] = useState(false);
   const [options, setOptions] = useState<string[]>(["Option 1",]);
 
+  const [ratings, setRatings] = useState<Record<string, number>>({});
+
   const resetForm = () => {
     setEditingField(null);
     setLabel("");
@@ -245,6 +247,8 @@ export default function FormBuilderPage() {
     ))}
   </div>
 )}
+
+
                 
 
                   <p className="text-xs text-muted-foreground mt-1">
