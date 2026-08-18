@@ -61,7 +61,7 @@ export default function BillingPage() {
             {isProActive ? (
               <CancelSubscriptionButton />
             ) : (
-              <UpgradeButton />
+              <UpgradeButton plan="pro" />
             )}
           </CardContent>
         </Card>

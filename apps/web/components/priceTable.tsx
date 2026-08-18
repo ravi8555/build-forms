@@ -3,6 +3,7 @@
 import React, { useState,useEffect } from "react";
 import { Rocket, Crown, Building, Check } from "lucide-react";
 import Link from "next/link";
+import { platform } from "os";
 
 export const Pricing: React.FC = () => {
   const [yearly, setYearly] = useState(false);
@@ -11,6 +12,7 @@ export const Pricing: React.FC = () => {
   const plans = [
     {
       name: "Starter",
+      
       month: 0,
       year: 0,
       sub: "Free forever",
@@ -25,7 +27,8 @@ export const Pricing: React.FC = () => {
       ],
       button: "Get Started",
       icon: <Rocket className="w-6 h-6 text-green-400" />,
-      navTo:"/auth"
+      navTo:"/auth",
+      plan:"free"
     },
     {
       name: "Professional",
@@ -47,7 +50,9 @@ export const Pricing: React.FC = () => {
       button: "Upgrade Now",
       featured: true,
       icon: <Crown className="w-6 h-6 text-yellow-400" />,
-      navTo:"/auth"
+      navTo: "/auth?plan=pro",
+      plan:"pro",
+      
     },
     {
       name: "Enterprise",
@@ -68,7 +73,8 @@ export const Pricing: React.FC = () => {
       ],
       button: "Contact Sales",
       icon: <Building className="w-6 h-6 text-purple-400" />,
-      navTo:"/auth"
+      navTo: "/auth?plan=enterprise",
+      plan:"enterprise"
     },
   ];
  

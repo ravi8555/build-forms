@@ -8,6 +8,7 @@ import {
   getUserSubscriptionOutputModel,
   startProSubscriptionOutputModel,
   cancelSubscriptionOutputModel,
+  startSubscriptionInputModel,
 } from "./model";
 
 const TAGS = ["Billing"];
@@ -35,19 +36,22 @@ export const billingRouter = router({
     }),
 
   startSubscription: authenticatedProcedure
-    .meta({
-      openapi: {
-        method: "POST",
-        path: getPath("/startSubscription"),
-        tags: TAGS,
-        protect: true,
-      },
-    })
-    .input(z.undefined())
-    .output(startProSubscriptionOutputModel)
-    .mutation(async ({ ctx }) => {
-      return billingService.createProSubscription(ctx.user.id);
-    }),
+  .meta({
+    openapi: {
+      method: "POST",
+      path: getPath("/startSubscription"),
+      tags: TAGS,
+      protect: true,
+    },
+  })
+  .input(startSubscriptionInputModel)
+  .output(startProSubscriptionOutputModel)
+  .mutation(async ({input, ctx }) => {
+    return billingService.createSubscription(
+      ctx.user.id,
+      input.plan
+    );
+  }),
 
   cancelSubscription: authenticatedProcedure
     .meta({

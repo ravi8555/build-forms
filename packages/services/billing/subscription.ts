@@ -21,6 +21,12 @@ type UserBillingRow = {
   razorPaySubscriptionId: string | null;
 };
 
+const RAZORPAY_PLAN_IDS = {
+  pro:process.env.RAZORPAY_PRO_PLAN_ID,
+  enterprise: process.env.RAZORPAY_ENTERPRISE_PLAN_ID,
+} as const;
+
+
 class BillingService {
   private async getBillingUser(userId: string): Promise<UserBillingRow | null> {
     const [user] = await db
@@ -72,35 +78,71 @@ class BillingService {
     return { plan: "free", status: "canceled", renewsAt, subscriptionId };
   }
 
-  public async createProSubscription(userId: string) {
-    const subscription = await this.getUserSubscription(userId);
+//   public async createProSubscription(userId: string) {
+//     const subscription = await this.getUserSubscription(userId);
 
-    if (subscription.plan === "pro" && subscription.status === "active") {
-      throw new Error("You already have an active Pro subscription.");
-    }
+//     if (subscription.plan === "pro" && subscription.status === "active") {
+//       throw new Error("You already have an active Pro subscription.");
+//     }
 
-    if (!env.RAZORPAY_PLAN_ID) {
-      throw new Error("Razorpay plan is not configured.");
-    }
+//     if (!env.RAZORPAY_PLAN_ID) {
+//       throw new Error("Razorpay plan is not configured.");
+//     }
 
-    const razorpay = getRazorpay();
-    const razorpaySubscription = await razorpay.subscriptions.create({
-      plan_id: env.RAZORPAY_PLAN_ID,
-      total_count: 12,
+//     const razorpay = getRazorpay();
+//     const razorpaySubscription = await razorpay.subscriptions.create({
+//       plan_id: env.RAZORPAY_PLAN_ID,
+//       total_count: 12,
+//       customer_notify: 1,
+//       notes: { userId },
+//     });
+
+//     await db
+//       .update(usersTable)
+//       .set({
+//         razorPaySubscriptionId: razorpaySubscription.id,
+//         subscriptionStatus: "pending",
+//       })
+//       .where(eq(usersTable.id, userId));
+
+//     return { subscriptionId: razorpaySubscription.id };
+//   }
+
+public async createSubscription(
+  userId: string,
+  plan: "pro" | "enterprise"
+) {
+  const planId = RAZORPAY_PLAN_IDS[plan];
+
+  if (!planId) {
+    throw new Error("Razorpay plan is not configured");
+  }
+
+  const razorpay = getRazorpay();
+
+  const subscription =
+    await razorpay.subscriptions.create({
+      plan_id: planId,
+      total_count: 120,
+      quantity: 1,
       customer_notify: 1,
-      notes: { userId },
+      notes: {
+        userId,
+        plan,
+      },
     });
-
     await db
       .update(usersTable)
       .set({
-        razorPaySubscriptionId: razorpaySubscription.id,
+        razorPaySubscriptionId: subscription.id,
         subscriptionStatus: "pending",
       })
       .where(eq(usersTable.id, userId));
 
-    return { subscriptionId: razorpaySubscription.id };
-  }
+  return {
+    subscriptionId: subscription.id,
+  };
+}
 
   public async cancelProSubscription(userId: string) {
     const user = await this.getBillingUser(userId);

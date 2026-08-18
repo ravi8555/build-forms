@@ -7,10 +7,14 @@ import { toast } from "sonner";
 
 import { Button } from "~/components/ui/button";
 import { env } from "~/env.js";
-import { useStartProSubscription } from "~/hooks/api/billing";
+import { useStartSubscription } from "~/hooks/api/billing";
 
 type RazorpayCheckout = new (options: Record<string, unknown>) => {
   open: () => void;
+};
+
+type UpgradeButtonProps = {
+  plan: "pro" | "enterprise";
 };
 
 declare global {
@@ -21,10 +25,70 @@ declare global {
 
 const RAZORPAY_SCRIPT_URL = "https://checkout.razorpay.com/v1/checkout.js";
 
-export function UpgradeButton() {
+// export function UpgradeButton() {
+//   const router = useRouter();
+//   const [loading, setLoading] = useState(false);
+//   const { startProSubscriptionAsync } = useStartProSubscription();
+
+//   async function handleUpgrade() {
+//     const key = env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+
+//     if (!key) {
+//       toast.error("Razorpay is not configured yet.");
+//       return;
+//     }
+
+//     if (!window.Razorpay) {
+//       toast.error("Checkout is still loading, please try again in a moment.");
+//       return;
+//     }
+
+//     setLoading(true);
+
+//     try {
+//       const { subscriptionId } = await startProSubscriptionAsync();
+
+//       const checkout = new window.Razorpay({
+//         key,
+//         subscription_id: subscriptionId,
+//         name: "BuildForms",
+//         description: "Professional plan",
+//         handler: () => {
+//           toast.success(
+//             "Payment successful! Your Pro plan will activate shortly."
+//           );
+//           router.refresh();
+//         },
+//       });
+
+//       checkout.open();
+//     } catch (error) {
+//       const message =
+//         error instanceof Error ? error.message : "Could not start checkout.";
+//       toast.error(message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }
+
+//   return (
+//     <>
+//       <Script src={RAZORPAY_SCRIPT_URL} strategy="lazyOnload" />
+//       <Button onClick={handleUpgrade} disabled={loading}>
+//         {loading ? "Opening checkout…" : "Upgrade to Pro"}
+//       </Button>
+//     </>
+//   );
+// }
+
+export function UpgradeButton({
+  plan,
+}: UpgradeButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { startProSubscriptionAsync } = useStartProSubscription();
+
+  const { startSubscriptionAsync } =
+    useStartSubscription();
 
   async function handleUpgrade() {
     const key = env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
@@ -35,24 +99,34 @@ export function UpgradeButton() {
     }
 
     if (!window.Razorpay) {
-      toast.error("Checkout is still loading, please try again in a moment.");
+      toast.error(
+        "Checkout is still loading, please try again in a moment."
+      );
       return;
     }
 
     setLoading(true);
 
     try {
-      const { subscriptionId } = await startProSubscriptionAsync();
+      const { subscriptionId } =
+        await startSubscriptionAsync({
+          plan,
+        });
 
       const checkout = new window.Razorpay({
         key,
         subscription_id: subscriptionId,
         name: "BuildForms",
-        description: "Professional plan",
+        description:
+          plan === "pro"
+            ? "Professional plan"
+            : "Enterprise plan",
+
         handler: () => {
           toast.success(
-            "Payment successful! Your Pro plan will activate shortly."
+            "Payment successful! Your plan will activate shortly."
           );
+
           router.refresh();
         },
       });
@@ -60,7 +134,10 @@ export function UpgradeButton() {
       checkout.open();
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Could not start checkout.";
+        error instanceof Error
+          ? error.message
+          : "Could not start checkout.";
+
       toast.error(message);
     } finally {
       setLoading(false);
@@ -69,9 +146,20 @@ export function UpgradeButton() {
 
   return (
     <>
-      <Script src={RAZORPAY_SCRIPT_URL} strategy="lazyOnload" />
-      <Button onClick={handleUpgrade} disabled={loading}>
-        {loading ? "Opening checkout…" : "Upgrade to Pro"}
+      <Script
+        src={RAZORPAY_SCRIPT_URL}
+        strategy="lazyOnload"
+      />
+
+      <Button
+        onClick={handleUpgrade}
+        disabled={loading}
+      >
+        {loading
+          ? "Opening checkout…"
+          : plan === "pro"
+            ? "Upgrade to Pro"
+            : "Upgrade to Enterprise"}
       </Button>
     </>
   );

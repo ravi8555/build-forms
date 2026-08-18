@@ -35,3 +35,12 @@ export const cancelSubscriptionOutputModel = z.object({
 export type CancelSubscriptionOutputType = z.infer<
   typeof cancelSubscriptionOutputModel
 >;
+
+export const startSubscriptionInputModel = z.object({
+  plan: z.enum(["pro", "enterprise"]),
+});
+
+export type StartSubscriptionInputType =
+  z.infer<typeof startSubscriptionInputModel>;
+
+  

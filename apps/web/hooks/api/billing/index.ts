@@ -19,7 +19,7 @@ export const useSubscription = (enabled = true) => {
   };
 };
 
-export const useStartProSubscription = () => {
+export const useStartSubscription = () => {
   const utils = trpc.useUtils();
 
   const mutation = trpc.billing.startSubscription.useMutation({
@@ -29,8 +29,8 @@ export const useStartProSubscription = () => {
   });
 
   return {
-    startProSubscriptionAsync: mutation.mutateAsync,
-    startProSubscription: mutation.mutate,
+    startSubscriptionAsync: mutation.mutateAsync,
+    startSubscription: mutation.mutate,
     isPending: mutation.isPending,
     error: mutation.error,
     isError: mutation.isError,
