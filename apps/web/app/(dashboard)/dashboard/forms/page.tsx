@@ -76,8 +76,10 @@ export default function FormsPage() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
+      
       <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
         <div>
+
           <h1 className="text-3xl font-bold title-font-color">
             Forms
           </h1>

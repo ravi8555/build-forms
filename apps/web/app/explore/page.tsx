@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { LoadingSpinner } from "~/components/LoadingSpinner"
 
 export default function ExplorePage() {
   const { forms, isLoading, isError } =
@@ -35,7 +36,10 @@ export default function ExplorePage() {
         </div>
 
         {isLoading && (
-          <p className="text-center">Loading forms...</p>
+          <p className="text-center">
+            Loading forms...
+            <LoadingSpinner/>
+          </p>
         )}
 
         {isError && (

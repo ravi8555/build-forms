@@ -9,6 +9,10 @@ import { apiReference } from "@scalar/express-api-reference";
 
 import { serverRouter, createContext } from "@repo/trpc/server";
 import { userService } from "@repo/trpc/server/services";
+import {
+  handleSubscriptionWebhook,
+  verifyRazorpayWebhookSignature,
+} from "@repo/services/billing/webhook";
 
 import cookieParser from 'cookie-parser'
 
@@ -67,6 +71,47 @@ app.use(
 
 
 app.use(cookieParser())
+
+// Razorpay subscription webhook. Uses `express.raw` so the raw body is
+// available for signature verification (must run before `express.json`).
+app.post(
+  "/api/webhooks/razorpay",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    try {
+      const signature = req.headers["x-razorpay-signature"];
+      const body = req.body;
+
+      if (
+        !signature ||
+        typeof signature !== "string" ||
+        !Buffer.isBuffer(body)
+      ) {
+        return res
+          .status(400)
+          .json({ ok: false, message: "Missing signature or body" });
+      }
+
+      const rawBody = body.toString("utf8");
+
+      if (!verifyRazorpayWebhookSignature(rawBody, signature)) {
+        return res
+          .status(400)
+          .json({ ok: false, message: "Invalid signature" });
+      }
+
+      const payload = JSON.parse(rawBody);
+      await handleSubscriptionWebhook(payload);
+
+      return res.json({ ok: true });
+    } catch (error) {
+      logger.error("Razorpay webhook failed", { error });
+      return res
+        .status(500)
+        .json({ ok: false, message: "Webhook processing failed" });
+    }
+  }
+);
 
 app.use(express.json());
 

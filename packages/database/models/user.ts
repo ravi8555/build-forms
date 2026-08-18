@@ -27,6 +27,11 @@ export const usersTable = pgTable("users", {
 
   salt : text('salt'),
   password: text('password'),
+
+  plan : text("planname"),
+  razorPaySubscriptionId: text("subscriptionid"),
+  subscriptionStatus:text("subscriptionstatus"),
+  subscriptionRenewAt : timestamp(),
   
   passwordResetToken: text("password_reset_token"),
   passwordResetExpiresAt: timestamp("password_reset_expires_at"),
