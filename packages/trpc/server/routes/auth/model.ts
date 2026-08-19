@@ -71,3 +71,21 @@ export type ForgotPasswordOutputType =
 
 export type ResetPasswordOutputType =
   z.infer<typeof resetPasswordOutputModel>
+
+export const exportMyDataOutputModel = z.object({
+  profile: z.object({
+    id: z.string().uuid(),
+    email: z.string(),
+    fullName: z.string(),
+    createdAt: z.date().nullable(),
+  }),
+  forms: z.array(z.any()),
+  submissions: z.array(z.any()),
+  reports: z.array(z.any()),
+})
+export type ExportMyDataOutputType = z.infer<typeof exportMyDataOutputModel>
+
+export const deleteMyAccountOutputModel = z.object({
+  success: z.boolean(),
+})
+export type DeleteMyAccountOutputType = z.infer<typeof deleteMyAccountOutputModel>

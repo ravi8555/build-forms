@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon, LogOut, Form, ChartNoAxesCombined, CreditCardIcon } from "lucide-react"
+import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon, LogOut, Form, ChartNoAxesCombined, CreditCardIcon, ShieldCheckIcon } from "lucide-react"
 
 import { useLogout  } from "~/hooks/api/auth"
 import { useRouter } from "next/navigation";
@@ -72,6 +72,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         />
       ),
       isActive: pathname === "/dashboard/billing",
+    },
+    {
+      title: "Privacy & Data",
+      url: "/dashboard/privacy",
+      icon: (
+        <ShieldCheckIcon
+        />
+      ),
+      isActive: pathname === "/dashboard/privacy",
     },
    
   ],

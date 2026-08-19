@@ -21,6 +21,7 @@ import {
   FieldLabel,
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
+import { Checkbox } from "~/components/ui/checkbox";
 import { useSignup } from "~/hooks/api/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -54,10 +55,16 @@ export function SignupForm({
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const onSubmit = async (data: SignupFormData) => {
     
     try {
+
+      if (!agreeToTerms) {
+        enqueueSnackbar("Please accept the Terms of Service and Privacy Policy.", { variant: "error" });
+        return;
+      }
 
       if (env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
         enqueueSnackbar("Please complete the CAPTCHA before continuing.", { variant: "error" });
@@ -196,6 +203,29 @@ router.replace(
     </p>
   )}
 </Field>
+
+        <div className="flex items-start gap-2">
+          <Checkbox
+            id="agreeToTerms"
+            checked={agreeToTerms}
+            onCheckedChange={(v) => setAgreeToTerms(v === true)}
+            className="mt-0.5"
+          />
+          <label
+            htmlFor="agreeToTerms"
+            className="text-sm leading-5 text-muted-foreground"
+          >
+            I agree to the{" "}
+            <Link href="/terms-of-service" className="underline text-[#55C96B]">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy-policy" className="underline text-[#55C96B]">
+              Privacy Policy
+            </Link>
+            .
+          </label>
+        </div>
 
         <Turnstile onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} />
 

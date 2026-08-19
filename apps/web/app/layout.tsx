@@ -7,6 +7,7 @@ import { cn } from "~/lib/utils"
 import { TooltipProvider } from "~/components/ui/tooltip"
 import { ThemeProvider } from "next-themes"
 import { AuthProvider } from "./AuthProvider"
+import { CookieConsent } from "~/components/CookieConsent"
 
 
 const geist = Geist({
@@ -60,6 +61,7 @@ export default function RootLayout({
           <TooltipProvider>
           <AuthProvider>
             {children}
+            <CookieConsent />
             </AuthProvider> 
           </TooltipProvider>
           

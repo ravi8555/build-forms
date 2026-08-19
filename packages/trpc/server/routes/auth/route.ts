@@ -1,6 +1,6 @@
 import {createUserWithEmailAndPasswordInputModel,createUserWithEmailAndPasswordOutputModel, signInUserWithEmailAndPasswordOutputModel, signInUserWithEmailAndPasswordInputModel,
 getLoggedInUserInfoInputModel,
-getLoggedInUserInfoOutputModel,verifyEmailOutputModel,resendVerificationEmailOutputModel, resendVerificationEmailInputModel, verifyEmailInputModel,logoutOutputModel,resetPasswordOutputModel,forgotPasswordOutputModel} from "./model";
+getLoggedInUserInfoOutputModel,verifyEmailOutputModel,resendVerificationEmailOutputModel, resendVerificationEmailInputModel, verifyEmailInputModel,logoutOutputModel,resetPasswordOutputModel,forgotPasswordOutputModel,exportMyDataOutputModel,deleteMyAccountOutputModel} from "./model";
 import { userService } from "../../services";
 import { publicProcedure, router } from "../../trpc";
 import { generatePath } from "../../utils/path-generator";
@@ -215,6 +215,36 @@ resetPassword: publicProcedure
   .mutation(async ({ input }) => {
     return userService.resetPassword(input)
   }),
+
+  exportMyData: authenticatedProcedure
+    .meta({
+      openapi: {
+        method: "POST",
+        path: getPath("/exportMyData"),
+        tags: TAGS,
+        protect: true,
+      },
+    })
+    .output(exportMyDataOutputModel)
+    .mutation(async ({ ctx }) => {
+      return userService.exportUserData(ctx.user.id);
+    }),
+
+  deleteMyAccount: authenticatedProcedure
+    .meta({
+      openapi: {
+        method: "POST",
+        path: getPath("/deleteMyAccount"),
+        tags: TAGS,
+        protect: true,
+      },
+    })
+    .output(deleteMyAccountOutputModel)
+    .mutation(async ({ ctx }) => {
+      const result = await userService.deleteUserAccount(ctx.user.id);
+      clearAuthenticationCookie(ctx);
+      return result;
+    }),
 
   
 
