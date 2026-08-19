@@ -7,6 +7,7 @@ import { generatePath } from "../../utils/path-generator";
 import { getAuthenticationCookie, setAuthenticationCookie, clearAuthenticationCookie } from "../../utils/cookies";
 import { authenticatedProcedure } from "../../trpc";
 import {checkRateLimit} from "@repo/services/utils/check-rate-limit"
+import {verifyTurnstileToken} from "@repo/services/utils/turnstile"
 import {loginLimiter, registerLimiter, forgotPasswordLimiter, reportLimiter} from "@repo/services/utils/rate-limit"
 import {
   forgotPasswordInput,
@@ -34,6 +35,15 @@ await checkRateLimit(
     registerLimiter,
     email
 );
+
+const captchaValid = await verifyTurnstileToken(input.turnstileToken);
+if (!captchaValid) {
+  throw new TRPCError({
+    code: "BAD_REQUEST",
+    message: "Captcha verification failed. Please try again.",
+  });
+}
+
     const { id }  =
       await userService.createUserWithEmailAndPassword({
         fullName,
@@ -179,6 +189,15 @@ await checkRateLimit(
     forgotPasswordLimiter,
     input.email
 );
+
+    const captchaValid = await verifyTurnstileToken(input.turnstileToken);
+    if (!captchaValid) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Captcha verification failed. Please try again.",
+      });
+    }
+
     return userService.forgotPassword(input)
   }),
 

@@ -3,7 +3,8 @@ import {z} from 'zod'
 export const createUserWithEmailAndPasswordInputModel =  z.object({
   fullName: z.string().describe('Full name of user'),
   email : z.email().describe('email address of user'),
-  password : z.string().describe('Passwrod of the user')
+  password : z.string().describe('Passwrod of the user'),
+  turnstileToken: z.string().optional().describe('Cloudflare Turnstile token'),
 })
 
 export const createUserWithEmailAndPasswordOutputModel =  z.object({

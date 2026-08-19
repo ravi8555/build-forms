@@ -36,10 +36,10 @@ export default function ExplorePage() {
         </div>
 
         {isLoading && (
-          <p className="text-center">
+          <div className="text-center">
             Loading forms...
             <LoadingSpinner/>
-          </p>
+          </div>
         )}
 
         {isError && (

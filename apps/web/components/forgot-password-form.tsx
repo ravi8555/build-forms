@@ -2,12 +2,15 @@
 
 import { useForm } from "react-hook-form"
 import { cn } from "~/lib/utils"
+import { useState } from "react"
 import { Button } from "~/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "~/components/ui/field"
 import { Input } from "~/components/ui/input"
 import { useForgotPassword } from "~/hooks/api/auth"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { env } from "~/env.js"
+import { Turnstile } from "~/components/turnstile"
 
 import {
   Card,
@@ -28,6 +31,8 @@ export function ForgotPasswordForm({
   const { forgotPasswordAsync } = useForgotPassword()
   const router = useRouter()
 
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
   const {
     register,
     handleSubmit,
@@ -35,8 +40,13 @@ export function ForgotPasswordForm({
   } = useForm<ForgotPasswordFormData>()
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
+    if (env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
+      return
+    }
+
     await forgotPasswordAsync({
   email: data.email,
+  turnstileToken: turnstileToken ?? undefined,
 })
 
 router.replace(
@@ -85,6 +95,8 @@ router.replace(
             </p>
           )}
         </Field>
+
+        <Turnstile onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} />
 
         <Button
           type="submit"

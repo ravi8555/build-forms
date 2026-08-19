@@ -3,6 +3,7 @@
 
 import { useForm } from "react-hook-form";
 import { cn } from "~/lib/utils";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
 import { useSnackbar } from 'notistack';
@@ -23,6 +24,8 @@ import { Input } from "~/components/ui/input";
 import { useSignup } from "~/hooks/api/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { env } from "~/env.js";
+import { Turnstile } from "~/components/turnstile";
 
 type SignupFormData = {
   name: string;
@@ -50,14 +53,22 @@ export function SignupForm({
   
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
   const onSubmit = async (data: SignupFormData) => {
     
     try {
-      
+
+      if (env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !turnstileToken) {
+        enqueueSnackbar("Please complete the CAPTCHA before continuing.", { variant: "error" });
+        return;
+      }
+
       await createUserWithEmailAndPasswordAsync({
         email: data.email,
         fullName: data.name,
         password: data.password,
+        turnstileToken: turnstileToken ?? undefined,
       });
 
       
@@ -185,6 +196,8 @@ router.replace(
     </p>
   )}
 </Field>
+
+        <Turnstile onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} />
 
         <Button
           type="submit"

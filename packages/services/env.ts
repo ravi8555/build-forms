@@ -25,6 +25,11 @@ const envSchema = z.object({
     .optional()
     .describe("Razorpay webhook secret (falls back to RAZORPAY_KEY_SECRET)"),
 
+  TURNSTILE_SECRET_KEY: z
+    .string()
+    .optional()
+    .describe("Cloudflare Turnstile secret key (server-side verification)"),
+
 });
 
 function createEnv(env: NodeJS.ProcessEnv) {
