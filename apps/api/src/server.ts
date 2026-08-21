@@ -19,6 +19,7 @@ import cookieParser from 'cookie-parser'
 import { env } from "./env";
 import { tuple } from "zod";
 import { googleOAuth2Client } from "../../../packages/services/clients/google-oauth";
+import { oidcCallback } from "./routes/auth/oidc";
 import {
   setAuthenticationCookieForExpress,
 } from "@repo/trpc/server/utils/cookies";
@@ -203,6 +204,11 @@ app.get(
       `${env.APP_URL}/dashboard`
     );
   }
+);
+
+app.get(
+  "/auth/oidc/callback",
+  oidcCallback
 );
 
 app.use(

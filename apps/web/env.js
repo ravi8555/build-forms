@@ -5,7 +5,7 @@ export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
    * isn't built with invalid env vars.
-   */
+   */ 
   server: {
     OIDC_ISSUER: z.string().url(),
     OIDC_CLIENT_ID: z.string().min(1),

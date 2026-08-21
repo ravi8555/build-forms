@@ -57,6 +57,9 @@ importers:
       express:
         specifier: ^5.2.1
         version: 5.2.1
+      jose:
+        specifier: ^6.2.9
+        version: 6.2.9
       razorpay:
         specifier: ^2.9.8
         version: 2.9.8

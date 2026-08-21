@@ -230,6 +230,60 @@ await EmailUtils.sendVerificationEmail(
       }
   }
 
+  public async signInWithOidc(payload: {
+  sub: string;
+  email: string;
+  fullName: string;
+}) {
+  const email = payload.email.toLowerCase().trim();
+
+  let user = await this.getuserByEmail(email);
+
+  // Existing BuildForms user
+  if (user) {
+    const { token } = await this.generateUserToken({
+      id: user.id,
+      role: user.role,
+    });
+
+    return {
+      id: user.id,
+      role: user.role,
+      token,
+    };
+  }
+
+  // New BuildForms user
+  const insertedUser = await db
+    .insert(usersTable)
+    .values({
+      email,
+      fullName: payload.fullName,
+      emailVerified: true,
+    })
+    .returning({
+      id: usersTable.id,
+      role: usersTable.role,
+    });
+
+  if (!insertedUser.length) {
+    throw new Error("Unable to create OIDC user");
+  }
+
+  const newUser = insertedUser[0]!;
+
+  const { token } = await this.generateUserToken({
+    id: newUser.id,
+    role: newUser.role,
+  });
+
+  return {
+    id: newUser.id,
+    role: newUser.role,
+    token,
+  };
+}
+
   public async verifyAndDecodedUserToken(token:string){
     const {id, role} = await this.verifyUserToken(token)
     return {

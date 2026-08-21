@@ -1,3 +1,4 @@
+// apps/web/app/api/app/oidc/route.ts
 import { NextResponse } from "next/server";
 
 import {
@@ -40,25 +41,35 @@ export async function GET() {
     path: "/",
     maxAge: 600,
   };
+  const oidcCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax" as const,
+  path: "/",
+  domain:
+    process.env.NODE_ENV === "production"
+      ? ".buildforms.in"
+      : undefined,
+  maxAge: 600,
+};
 
   response.cookies.set(
-    "oidc_state",
-    state,
-    cookieOptions
-  );
+  "oidc_state",
+  state,
+  oidcCookieOptions
+);
 
   response.cookies.set(
-    "oidc_nonce",
-    nonce,
-    cookieOptions
-  );
+  "oidc_nonce",
+  nonce,
+  oidcCookieOptions
+);
 
-  response.cookies.set(
-    "oidc_code_verifier",
-    codeVerifier,
-    cookieOptions
-  );
-
+response.cookies.set(
+  "oidc_code_verifier",
+  codeVerifier,
+  oidcCookieOptions
+);
   return response;
 }
 
