@@ -1,6 +1,7 @@
 "use client"
 
 import React,{useState} from 'react'
+import { ShieldCheck } from 'lucide-react';
 
 import {
   Tabs,
@@ -63,7 +64,7 @@ const page = () => {
     <div className="grid min-h-svh lg:grid-cols-2">
           <div className="flex flex-col gap-4 p-6 md:p-10">               
             <div className="flex flex-1 items-center justify-center">              
-              <div className="w-full max-w-sm"> 
+              <div className="w-full max-w-md"> 
 
       <div className="w-full max-w-md">
   <div 
@@ -135,12 +136,14 @@ const page = () => {
 </TabsList> */}
 
  {/* <div className="border rounded-md p-4 mb-4">      */}
-  
+  <div className='flex-2'>
+<div className='flex w-full gap-2 justify-center' >
+
                   {/* Google Button */}
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex h-12 w-full items-center justify-center gap-3 rounded-md border-gray-300 bg-white hover:bg-gray-50 mt-0" 
+                    className="flex  cursor-pointer h-12 w-1/2 items-center justify-center gap-3 rounded-md border-gray-300 bg-white hover:bg-gray-50 mt-0" 
                     onClick={() => {
                       window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google`;
                     }}
@@ -149,14 +152,19 @@ const page = () => {
                     <span>Continue with Google</span>
                   </Button>
 
-                  {/* <Button
-                  variant="outline"
-                  type="button"
-                  className="h-12 mt-2 w-full rounded-md cursor-pointer"
-                >
-                  Sign in with SSO (OIDC)
-                </Button> */}
+                <Button
+  variant="outline"
+  type="button"
+  className="h-12 w-1/2 rounded-md cursor-pointer"
+  onClick={() => {
+    window.location.href = "/api/app/oidc";
+  }}
+><ShieldCheck className="h-10 w-10 text-[#08906c]" />
+  Sign in with SSO
+</Button>
+  </div>
 
+  </div>
                   {/* Divider */}
                  
 

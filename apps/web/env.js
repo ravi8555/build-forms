@@ -6,7 +6,12 @@ export const env = createEnv({
    * Specify your server-side environment variables schema here. This way you can ensure the app
    * isn't built with invalid env vars.
    */
-  server: {},
+  server: {
+    OIDC_ISSUER: z.string().url(),
+    OIDC_CLIENT_ID: z.string().min(1),
+    OIDC_CLIENT_SECRET: z.string().min(1),
+    OIDC_REDIRECT_URI: z.string().url(),
+  },
 
   /**
    * Specify your client-side environment variables schema here. This way you can ensure the app
@@ -24,6 +29,10 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    OIDC_ISSUER: process.env.OIDC_ISSUER,
+    OIDC_CLIENT_ID: process.env.OIDC_CLIENT_ID,
+    OIDC_CLIENT_SECRET: process.env.OIDC_CLIENT_SECRET,
+    OIDC_REDIRECT_URI: process.env.OIDC_REDIRECT_URI,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
