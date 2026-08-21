@@ -143,7 +143,7 @@ const page = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex  cursor-pointer h-12 w-1/2 items-center justify-center gap-3 rounded-md border-gray-300 bg-white hover:bg-gray-50 mt-0" 
+                    className="flex  cursor-pointer h-12 w-full items-center justify-center gap-3 rounded-md border-gray-300 bg-white hover:bg-gray-50 mt-0" 
                     onClick={() => {
                       window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/google`;
                     }}
@@ -152,7 +152,7 @@ const page = () => {
                     <span>Continue with Google</span>
                   </Button>
 
-                <Button
+               {/*  <Button
   variant="outline"
   type="button"
   className="h-12 w-1/2 rounded-md cursor-pointer"
@@ -161,7 +161,7 @@ const page = () => {
   }}
 ><ShieldCheck className="h-10 w-10 text-[#08906c]" />
   Sign in with SSO
-</Button>
+</Button>*/}
   </div>
 
   </div>
