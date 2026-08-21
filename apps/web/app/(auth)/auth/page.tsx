@@ -157,7 +157,7 @@ const page = () => {
   type="button"
   className="h-12 w-1/2 rounded-md cursor-pointer"
   onClick={() => {
-    window.location.href = "/api/app/oidc";
+    window.location.href = "/api/auth/oidc";
   }}
 ><ShieldCheck className="h-10 w-10 text-[#08906c]" />
   Sign in with SSO
