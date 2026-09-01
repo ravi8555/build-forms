@@ -43,6 +43,7 @@ import { reportLimiter} from "@repo/services/utils/rate-limit"
 
 
 import FormReportService from "@repo/services/form-reports";
+import { assertFormOwner } from "@repo/services/billing/usage";
 
 const TAGS = ["Forms"];
 const getPath = generatePath("/forms");
@@ -232,7 +233,10 @@ export const formRouter = router({
     })
     .input(getFormSubmissionsInputModel)
     .output(getFormSubmissionsOutputModel)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      // Only the form owner may read submissions (restrict to logged-in owner).
+      await assertFormOwner(ctx.user.id, input.formId);
+
       return formSubmissionService.getFormSubmissions({ formId: input.formId });
     }),
 

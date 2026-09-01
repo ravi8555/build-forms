@@ -40,6 +40,7 @@ const Page = () => {
 
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [values, setValues] = useState<Record<string, any>>({});
   const [openReport, setOpenReport] = useState(false);
   
@@ -65,6 +66,7 @@ const themeConfig =
 
     try {
       setSubmitting(true);
+      setSubmitError(null);
 
       const mappedValues = form.fields
         .filter((field) => values[field.labelKey] !== undefined)
@@ -80,7 +82,17 @@ const themeConfig =
 
       setSubmitted(true);
     } catch (error) {
-      console.error(error);
+      const message =
+        (error as { message?: string } | null)?.message ??
+        "Something went wrong. Please try again.";
+
+      if (message.includes("RESPONSE_LIMIT_REACHED")) {
+        setSubmitError(
+          "This form has reached its response limit. Please try again later."
+        );
+      } else {
+        setSubmitError(message);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -382,6 +394,12 @@ hasReported ? (
                         )}
                       </div>
                     ))}
+
+                    {submitError && (
+                      <p className="text-sm text-[#ef4444] mb-4">
+                        {submitError}
+                      </p>
+                    )}
 
                     <Button
                       type="submit"

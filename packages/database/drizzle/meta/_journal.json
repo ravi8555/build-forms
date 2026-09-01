@@ -127,6 +127,13 @@
       "when": 1787049464390,
       "tag": "0017_common_banshee",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1788273188581,
+      "tag": "0018_tranquil_odin",
+      "breakpoints": true
     }
   ]
 }

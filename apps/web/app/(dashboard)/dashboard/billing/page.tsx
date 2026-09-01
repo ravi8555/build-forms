@@ -68,31 +68,63 @@ export default function BillingPage() {
 
         <Card className="rounded-xl card-bx brdbx">
           <CardHeader>
-            <CardTitle>Monthly usage</CardTitle>
+            <CardTitle>Forms used</CardTitle>
           </CardHeader>
           <CardContent>
-            {subscription.usage.limit === null ? (
-              <div>
+            <div className="flex flex-col gap-4">
+              {subscription.usage.forms.limit === null ? (
                 <p className="text-3xl font-bold">
-                  {subscription.usage.used}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  responses this month (unlimited on Pro)
-                </p>
-              </div>
-            ) : (
-              <div>
-                <p className="text-3xl font-bold">
-                  {subscription.usage.used}{" "}
+                  {subscription.usage.forms.used}
                   <span className="text-lg font-normal text-muted-foreground">
-                    / {subscription.usage.limit}
+                    {" "}forms (unlimited on Pro)
                   </span>
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  responses this month (free plan limit)
+              ) : (
+                <p className="text-3xl font-bold">
+                  {subscription.usage.forms.used}{" "}
+                  <span className="text-lg font-normal text-muted-foreground">
+                    / {subscription.usage.forms.limit}
+                  </span>
                 </p>
-              </div>
-            )}
+              )}
+
+              <p className="text-sm text-muted-foreground">
+                {subscription.usage.forms.limit === null
+                  ? "Create unlimited forms"
+                  : "On the free plan you can own up to this many forms. Upgrade to Pro for unlimited forms."}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-xl card-bx brdbx">
+          <CardHeader>
+            <CardTitle>Responses this month</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-4">
+              {subscription.usage.responses.limit === null ? (
+                <p className="text-3xl font-bold">
+                  {subscription.usage.responses.used}
+                  <span className="text-lg font-normal text-muted-foreground">
+                    {" "}responses (unlimited on Pro)
+                  </span>
+                </p>
+              ) : (
+                <p className="text-3xl font-bold">
+                  {subscription.usage.responses.used}{" "}
+                  <span className="text-lg font-normal text-muted-foreground">
+                    / {subscription.usage.responses.limit}
+                  </span>
+                </p>
+              )}
+
+              <p className="text-sm text-muted-foreground">
+                {subscription.usage.responses.limit === null
+                  ? "Unlimited responses across your forms"
+                  : "Each form can receive up to this many responses on the free plan. Upgrade to Pro for 10,000 per form."}
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>

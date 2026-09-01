@@ -47,7 +47,18 @@ const CreateFormDailog = () => {
       setTheme("");
       setOpen(false);
     } catch (err) {
-      console.error(err);
+      const message =
+        (err as { message?: string } | null)?.message ??
+        "Something went wrong. Please try again.";
+
+      if (message.includes("FORM_LIMIT_REACHED")) {
+        enqueueSnackbar(
+          "You've reached the 5-form limit on the free plan. Upgrade to Pro for unlimited forms.",
+          { variant: "error" }
+        );
+      } else {
+        enqueueSnackbar(message, { variant: "error" });
+      }
     }
   };
   return (

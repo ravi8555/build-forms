@@ -4,6 +4,10 @@ import { formFieldsTable } from "@repo/database/models/form-fields";
 import { formSubmissionTable } from "@repo/database/models/form-submission";
 import { formReportsTable } from "@repo/database/models/form-report";
 import {
+  assertCanCreateForm,
+  trackUsage,
+} from "../billing/usage";
+import {
   type CreateFormInputType,
   createFormInput,
   CreateFormServiceType,
@@ -20,6 +24,9 @@ class FormService {
     // public async createForm(payload: CreateFormServiceType) {
     // const { title, description, createdBy } = payload
 
+    // Enforce the user's plan form-count limit and record the usage event.
+    await assertCanCreateForm(createdBy);
+
     const result = await db.insert(formsTable).values({ title, description,theme, createdBy }).returning({
       id: formsTable.id,
     });
@@ -27,6 +34,8 @@ class FormService {
     if (!result || result.length === 0 || !result[0]?.id) {
       throw new Error(`Something went wrong while creating the form`);
     }
+
+    await trackUsage(createdBy, "FORM_CREATED", result[0].id);
 
     return { id: result[0].id };
   }

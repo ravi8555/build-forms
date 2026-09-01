@@ -7,8 +7,14 @@ export const subscriptionStatusModel = z.enum(["active", "trialing", "canceled"]
 export type SubscriptionStatusType = z.infer<typeof subscriptionStatusModel>;
 
 export const usageOutputModel = z.object({
-  used: z.number(),
-  limit: z.number().nullable(),
+  forms: z.object({
+    used: z.number(),
+    limit: z.number().nullable(),
+  }),
+  responses: z.object({
+    used: z.number(),
+    limit: z.number().nullable(),
+  }),
 });
 
 export const getUserSubscriptionOutputModel = z.object({
