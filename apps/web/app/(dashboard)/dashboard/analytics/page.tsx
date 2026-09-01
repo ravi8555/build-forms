@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BarChart3,
   FileText,
   Globe,
   EyeOff,
   ClipboardList,
+  User,
 } from "lucide-react";
 
 import {
@@ -29,13 +30,15 @@ import {
 } from "recharts";
 
 import { useDashboardAnalytics } from "~/hooks/api/form";
+import { useAuth } from "~/app/AuthProvider";
 
 const COLORS = ["#55C96B", "#f59e0b", "#3b82f6"];
 
 export default function AnalyticsPage() {
-  const { analytics, isLoading } = useDashboardAnalytics();
+  const { user } = useAuth();
+  const { analytics, isLoading:analyticIsLoading } = useDashboardAnalytics();
 
-  if (isLoading) {
+   if (analyticIsLoading) {
     return (
       <div className="p-6 text-muted-foreground">
         Loading analytics...
@@ -44,7 +47,6 @@ export default function AnalyticsPage() {
   }
 
   if (!analytics) return null;
-
   const visibilityData = [
     {
       name: "Published",
@@ -60,7 +62,9 @@ export default function AnalyticsPage() {
     },
   ];
 
+
   return (
+   
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
@@ -243,5 +247,7 @@ export default function AnalyticsPage() {
         </CardContent>
       </Card>
     </div>
+    
   );
 }
+

@@ -14,8 +14,12 @@ const isProduction = process.env.NODE_ENV === "production";
 //   httpOnly: true,
 //   secure: isProduction,
 //   sameSite: isProduction ? "none" : "lax",
-//   domain: isProduction ? process.env.COOKIE_DOMAIN : undefined,
 //   maxAge: ONE_YEAR,
+
+//    // domain:
+//   //   isProduction
+//   //     ? ".buildforms.in"
+//   //     : undefined,
 // };
 
 const defaultCookieOption: CookieOptions = {
@@ -23,13 +27,18 @@ const defaultCookieOption: CookieOptions = {
   httpOnly: true,
   secure: isProduction,
   sameSite: isProduction ? "none" : "lax",
+  domain: isProduction
+    ? ".buildforms.in"
+    : undefined,
   maxAge: ONE_YEAR,
-
-   // domain:
-  //   isProduction
-  //     ? ".buildforms.in"
-  //     : undefined,
 };
+
+export function clearCookieForExpress(
+  res: Response,
+  name: string
+) {
+  res.clearCookie(name, defaultCookieOption);
+}
 
 export function createCookieFactory(res: Response) {
   return function (

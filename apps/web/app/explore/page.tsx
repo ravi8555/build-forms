@@ -13,11 +13,12 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { LoadingSpinner } from "~/components/LoadingSpinner"
 
 export default function ExplorePage() {
   const { forms, isLoading, isError } =
     useListPublicForms()
-    console.log(forms);   
+    // console.log(forms);   
 
     return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -35,7 +36,10 @@ export default function ExplorePage() {
         </div>
 
         {isLoading && (
-          <p className="text-center">Loading forms...</p>
+          <div className="text-center">
+            Loading forms...
+            <LoadingSpinner/>
+          </div>
         )}
 
         {isError && (

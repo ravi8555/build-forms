@@ -1,3 +1,4 @@
+
 import express from "express";
 import { logger } from "@repo/logger";
 import cors from "cors";
@@ -8,12 +9,17 @@ import { apiReference } from "@scalar/express-api-reference";
 
 import { serverRouter, createContext } from "@repo/trpc/server";
 import { userService } from "@repo/trpc/server/services";
+import {
+  handleSubscriptionWebhook,
+  verifyRazorpayWebhookSignature,
+} from "@repo/services/billing/webhook";
 
 import cookieParser from 'cookie-parser'
 
 import { env } from "./env";
 import { tuple } from "zod";
 import { googleOAuth2Client } from "../../../packages/services/clients/google-oauth";
+import { oidcCallback } from "./routes/auth/oidc";
 import {
   setAuthenticationCookieForExpress,
 } from "@repo/trpc/server/utils/cookies";
@@ -25,42 +31,88 @@ const openApiDocument = generateOpenApiDocument(serverRouter, {
 });
 
 // Server
-const allowedOrigins =
-  env.NODE_ENV === "production"
-    ? [
-        "https://buildforms.in",
-        "https://www.buildforms.in",
-        "https://build-forms.onrender.com",
-      ]
-    : [
-        "http://localhost:3030",
-        "http://localhost:8000",
-      ];
+// Server
+  const allowedOrigins =
+    env.NODE_ENV === "production"
+      ? [
+          "https://buildforms.in",
+          "https://www.buildforms.in",
+          // "https://api.buildforms.in",
+          "https://api.buildforms.in",
+        ]
+      : [
+          "http://localhost:3030",
+          "http://localhost:8000",
+        ];
+
+console.log("NODE_ENV =", env.NODE_ENV);
+console.log("Allowed Origins =", allowedOrigins);
+
+
+
 
 app.use(
   cors({
     origin(origin, callback) {
+      logger.info(`Incoming Origin: ${origin}`);
+
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.error("Blocked by CORS:", origin);
-        callback(new Error("Not allowed by CORS"));
+        return callback(null, true);
       }
+
+      logger.error(`Blocked by CORS: ${origin}`);
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   }),
 );
 
+
 // // // Local
 
-// const allowedOrigins = [
-//   "http://localhost:3030",
-//   "https://buildforms.in",
-//   "https://www.buildforms.in",
-//   "https://build-forms.onrender.com",
-// ];
 
 app.use(cookieParser())
+
+// Razorpay subscription webhook. Uses `express.raw` so the raw body is
+// available for signature verification (must run before `express.json`).
+app.post(
+  "/api/webhooks/razorpay",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    try {
+      const signature = req.headers["x-razorpay-signature"];
+      const body = req.body;
+
+      if (
+        !signature ||
+        typeof signature !== "string" ||
+        !Buffer.isBuffer(body)
+      ) {
+        return res
+          .status(400)
+          .json({ ok: false, message: "Missing signature or body" });
+      }
+
+      const rawBody = body.toString("utf8");
+
+      if (!verifyRazorpayWebhookSignature(rawBody, signature)) {
+        return res
+          .status(400)
+          .json({ ok: false, message: "Invalid signature" });
+      }
+
+      const payload = JSON.parse(rawBody);
+      await handleSubscriptionWebhook(payload);
+
+      return res.json({ ok: true });
+    } catch (error) {
+      logger.error("Razorpay webhook failed", { error });
+      return res
+        .status(500)
+        .json({ ok: false, message: "Webhook processing failed" });
+    }
+  }
+);
 
 app.use(express.json());
 
@@ -154,6 +206,11 @@ app.get(
   }
 );
 
+app.get(
+  "/auth/oidc/callback",
+  oidcCallback
+);
+
 app.use(
   "/api",
   createOpenApiExpressMiddleware({
@@ -171,6 +228,3 @@ app.use(
 );
 
 
-
-
-export default app;

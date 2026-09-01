@@ -2,43 +2,52 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useUser, useLogout } from "~/hooks/api/auth";
+import { useLogout } from "~/hooks/api/auth";
+import { useAuth } from "~/app/AuthProvider";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Sun, Moon, LogOut } from "lucide-react";
 import { cn } from "~/lib/utils";
 import Image from "next/image";
+import { Navbar } from "./Navbar";
 
 const Header = () => {
-  const { user, id, isLoading } = useUser();
+  const { user, isLoading } = useAuth();
   const { logoutAsync } = useLogout();
+  
 
   const router = useRouter();
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
 
   const [mounted, setMounted] = useState(false);
+  //  if (!user) router.push("/login");
 
-  useEffect(() => {
+  useEffect(() => {  
+
     setMounted(true);
   }, []);
 
-  // useEffect(() => {
-  //   if (pathname !== "/") return;
-
-  //   if (id) {
-  //     router.replace("/dashboard");
+  // const handleLogout = async () => {
+  //   try {
+  //     await logoutAsync();
+  //     router.replace("/auth");
+  //   } catch (error) {
+  //     console.error(error);
   //   }
-  // }, [id, pathname, router]);
+  // };
 
   const handleLogout = async () => {
-    try {
-      await logoutAsync();
-      router.replace("/auth");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  try {
+    await logoutAsync();
+    router.replace("/auth")
+    // setTimeout(async () => {
+  // }, 0);
+   
+  } catch (error) {
+    console.error(error)
+  }
+}
 
   if (!mounted) return null;
 
@@ -62,8 +71,13 @@ const Header = () => {
 
       {/* Navigation */}
       <nav className="flex items-center gap-6">
+        <Navbar 
+        user={user} 
+        isLoading={isLoading}
+        onLogout={handleLogout}
+        />
         
-<Link
+{/* <Link
   href="/explore"
   className="text-foreground hover:text-[#55C96B] transition"
 >
@@ -74,14 +88,14 @@ const Header = () => {
     <Link href="/admin/reports" className="text-foreground hover:text-[#55C96B] transition">
         Reports
     </Link>
-)}
+)} */}
 
         
         
 
         {/* Logged in */}
         
-        {!isLoading && id ? (
+        {/* {!isLoading && id ? (
           <>
            <Link
           href="/dashboard"
@@ -118,7 +132,7 @@ const Header = () => {
           </Link>
            </>
           
-        )}
+        )} */}
 
        
         <button

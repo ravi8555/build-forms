@@ -3,8 +3,12 @@ import { googleOAuth2Client } from "../clients/google-oauth";
 import {randomBytes, createHmac} from 'node:crypto'
 // import  {TRPCError}  from "@trpc/server";
 import JWT  from 'jsonwebtoken'
-import {db, eq} from '@repo/database'
+import {db, eq, inArray} from '@repo/database'
 import {usersTable} from '@repo/database/models/user'
+import {formsTable} from '@repo/database/models/form'
+import {formFieldsTable} from '@repo/database/models/form-fields'
+import {formSubmissionTable} from '@repo/database/models/form-submission'
+import {formReportsTable} from '@repo/database/models/form-report'
 import {env} from '../env'
 import {EmailUtils} from '../utils/email'
 
@@ -226,6 +230,60 @@ await EmailUtils.sendVerificationEmail(
       }
   }
 
+  public async signInWithOidc(payload: {
+  sub: string;
+  email: string;
+  fullName: string;
+}) {
+  const email = payload.email.toLowerCase().trim();
+
+  let user = await this.getuserByEmail(email);
+
+  // Existing BuildForms user
+  if (user) {
+    const { token } = await this.generateUserToken({
+      id: user.id,
+      role: user.role,
+    });
+
+    return {
+      id: user.id,
+      role: user.role,
+      token,
+    };
+  }
+
+  // New BuildForms user
+  const insertedUser = await db
+    .insert(usersTable)
+    .values({
+      email,
+      fullName: payload.fullName,
+      emailVerified: true,
+    })
+    .returning({
+      id: usersTable.id,
+      role: usersTable.role,
+    });
+
+  if (!insertedUser.length) {
+    throw new Error("Unable to create OIDC user");
+  }
+
+  const newUser = insertedUser[0]!;
+
+  const { token } = await this.generateUserToken({
+    id: newUser.id,
+    role: newUser.role,
+  });
+
+  return {
+    id: newUser.id,
+    role: newUser.role,
+    token,
+  };
+}
+
   public async verifyAndDecodedUserToken(token:string){
     const {id, role} = await this.verifyUserToken(token)
     return {
@@ -386,6 +444,89 @@ public async getAuthenticationMethods(): Promise<
         
 
   
+  // GDPR: export all data belonging to a user (data portability, Art. 20)
+  public async exportUserData(userId: string) {
+    const [user] = await db
+      .select({
+        id: usersTable.id,
+        email: usersTable.email,
+        fullName: usersTable.fullName,
+        createdAt: usersTable.createdAt,
+      })
+      .from(usersTable)
+      .where(eq(usersTable.id, userId));
+
+    if (!user) throw new Error("USER_NOT_FOUND");
+
+    const forms = await db
+      .select()
+      .from(formsTable)
+      .where(eq(formsTable.createdBy, userId));
+
+    const formIds = forms
+      .map((form) => form.id)
+      .filter((id): id is string => Boolean(id));
+
+    let submissions: unknown[] = [];
+    if (formIds.length > 0) {
+      submissions = await db
+        .select()
+        .from(formSubmissionTable)
+        .where(inArray(formSubmissionTable.formId, formIds));
+    }
+
+    const reports = await db
+      .select()
+      .from(formReportsTable)
+      .where(eq(formReportsTable.reportedBy, userId));
+
+    return {
+      profile: user,
+      forms,
+      submissions,
+      reports,
+    };
+  }
+
+  // GDPR: right to erasure (Art. 17) — deletes all data belonging to the user
+  public async deleteUserAccount(userId: string) {
+    const forms = await db
+      .select({ id: formsTable.id })
+      .from(formsTable)
+      .where(eq(formsTable.createdBy, userId));
+
+    const formIds = forms
+      .map((form) => form.id)
+      .filter((id): id is string => Boolean(id));
+
+    if (formIds.length > 0) {
+      await db
+        .delete(formSubmissionTable)
+        .where(inArray(formSubmissionTable.formId, formIds));
+      await db
+        .delete(formFieldsTable)
+        .where(inArray(formFieldsTable.formId, formIds));
+      await db
+        .delete(formReportsTable)
+        .where(inArray(formReportsTable.formId, formIds));
+    }
+
+    await db
+      .delete(formReportsTable)
+      .where(eq(formReportsTable.reportedBy, userId));
+
+    await db.delete(formsTable).where(eq(formsTable.createdBy, userId));
+
+    const deleted = await db
+      .delete(usersTable)
+      .where(eq(usersTable.id, userId))
+      .returning({ id: usersTable.id });
+
+    if (!deleted.length) throw new Error("USER_NOT_FOUND");
+
+    return { success: true };
+  }
+
 }
 
 export default UserService;

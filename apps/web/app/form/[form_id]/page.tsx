@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import { useGetForm, useSubmitForm, useHasReported } from "~/hooks/api/form";
-import { useUser } from "~/hooks/api/auth/";
+import { useAuth } from "~/app/AuthProvider";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
@@ -13,7 +13,10 @@ import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { FORM_THEMES } from "~/lib/form-themes";
 import ReportFormDialog from "~/components/forms/ReportFormDialog";
-// import ReportFormDialog from "~/components/ReportFormDialog";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
+import { Label } from "~/components/ui/label"; 
+import { RatingField } from "~/components/RatingField";
+
 
 import { cn } from "~/lib/utils";
 
@@ -28,7 +31,7 @@ import Footer from "~/components/Footer";
 
 const Page = () => {
   
-  const {user} = useUser()
+  const {user} = useAuth()
   const { form_id } = useParams<{ form_id: string }>();
   const { theme, setTheme } = useTheme();
 
@@ -39,7 +42,7 @@ const Page = () => {
   const [submitting, setSubmitting] = useState(false);
   const [values, setValues] = useState<Record<string, any>>({});
   const [openReport, setOpenReport] = useState(false);
-
+  
   const isDark = theme === "dark";
   const { hasReported } = useHasReported(form?.id ?? "");
 const themeConfig =
@@ -84,6 +87,7 @@ const themeConfig =
   };
 
   const renderField = (field: any) => {
+   
     switch (field.type) {
       case "TEXT":
         return (
@@ -125,7 +129,7 @@ const themeConfig =
 
       case "NUMBER":
         return (
-          <Input
+          <Input  
             type="number"
             placeholder={field.placeholder ?? ""}
             value={values[field.labelKey] ?? ""}
@@ -133,7 +137,7 @@ const themeConfig =
               handleChange(field.labelKey, e.target.value)
             }
             required={field.isRequired}
-          />
+          /> 
         );
 
       case "YES_NO":
@@ -150,34 +154,75 @@ const themeConfig =
             </span>
           </div>
         );
+// case "RATING":
+//   return (
+//     <div className="flex gap-2 text-3xl">
+//       {[1,2,3,4,5].map((star) => (
+//         <button
+//           type="button"
+//           key={star}
+//           onClick={() =>
+//             handleChange(
+//               field.labelKey,
+//               star
+//             )
+//           }
+//           className={
+//             (values[field.labelKey] ?? 0) >= star
+//               ? "text-yellow-400"
+//               : "text-gray-500"
+//           }
+//         >
+//           ★
+//         </button>
+//       ))}
+//     </div>
+//   );
+
 case "RATING":
   return (
-    <div className="flex gap-2 text-3xl">
-      {[1,2,3,4,5].map((star) => (
-        <button
-          type="button"
-          key={star}
-          onClick={() =>
-            handleChange(
-              field.labelKey,
-              star
-            )
-          }
-          className={
-            (values[field.labelKey] ?? 0) >= star
-              ? "text-yellow-400"
-              : "text-gray-500"
-          }
+    <RatingField
+      theme={form?.theme ?? "DEFAULT"}
+      value={values[field.labelKey] ?? 0}
+      onChange={(rating) =>
+        handleChange(field.labelKey, rating)
+      }
+    />
+  );
+
+ case "OPTION":
+  return (
+    <RadioGroup
+      value={values[field.labelKey] ?? ""}
+      onValueChange={(value) =>
+        handleChange(field.labelKey, value)
+      }
+    >
+      {field.options?.map((option: string) => (
+        <div
+          key={option}
+          className="flex items-center space-x-2"
         >
-          ★
-        </button>
+          <RadioGroupItem
+            value={option}
+            id={`${field.id}-${option}`}
+          />
+
+          <Label htmlFor={`${field.id}-${option}`}>
+            {option}
+          </Label>
+        </div>
       ))}
-    </div>
+    </RadioGroup>
   );
       default:
         return null;
     }
+
+    
   };
+
+
 
   if (isLoading) {
     return (

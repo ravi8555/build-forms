@@ -35,11 +35,14 @@ import {
 
 import { useSnackbar } from 'notistack';
 import CreateFormDailog from "~/components/Create-Form-Dailog";
+import { useAuth } from "~/app/AuthProvider"
+import { LoadingSpinner } from "~/components/LoadingSpinner";
 
 export default function FormsPage() {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { user, isLoading } = useAuth();
   
-  const { forms, isLoading } = useListForms();
+  // const { forms, isLoading } = useListForms();
+  const { forms } =  useListForms(!!user && !isLoading);
   
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<
@@ -54,7 +57,7 @@ export default function FormsPage() {
         ?.toLowerCase()
         .includes(search.toLowerCase());
 
-      const matchesFilter =
+      const matchesFilter = 
         filter === "ALL" ? true : form.visibility === filter;
 
       return matchesSearch && matchesFilter;
@@ -65,6 +68,7 @@ export default function FormsPage() {
     return (
       <div className="p-6 text-muted-foreground">
         Loading forms...
+        <LoadingSpinner />
       </div>
     );
   }
@@ -72,8 +76,10 @@ export default function FormsPage() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
+      
       <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
         <div>
+
           <h1 className="text-3xl font-bold title-font-color">
             Forms
           </h1>

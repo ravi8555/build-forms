@@ -35,6 +35,7 @@ export type SignInUserWithEmailAndPasswordInputType = z.infer<typeof signInUserW
 
 export const forgotPasswordInput = z.object({
   email: z.email(),
+  turnstileToken: z.string().optional().describe("Cloudflare Turnstile token"),
 })
 
 export type ForgotPasswordInputType =  z.infer<typeof forgotPasswordInput>

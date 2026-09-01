@@ -3,7 +3,8 @@ import {z} from 'zod'
 export const createUserWithEmailAndPasswordInputModel =  z.object({
   fullName: z.string().describe('Full name of user'),
   email : z.email().describe('email address of user'),
-  password : z.string().describe('Passwrod of the user')
+  password : z.string().describe('Passwrod of the user'),
+  turnstileToken: z.string().optional().describe('Cloudflare Turnstile token'),
 })
 
 export const createUserWithEmailAndPasswordOutputModel =  z.object({
@@ -70,3 +71,21 @@ export type ForgotPasswordOutputType =
 
 export type ResetPasswordOutputType =
   z.infer<typeof resetPasswordOutputModel>
+
+export const exportMyDataOutputModel = z.object({
+  profile: z.object({
+    id: z.string().uuid(),
+    email: z.string(),
+    fullName: z.string(),
+    createdAt: z.date().nullable(),
+  }),
+  forms: z.array(z.any()),
+  submissions: z.array(z.any()),
+  reports: z.array(z.any()),
+})
+export type ExportMyDataOutputType = z.infer<typeof exportMyDataOutputModel>
+
+export const deleteMyAccountOutputModel = z.object({
+  success: z.boolean(),
+})
+export type DeleteMyAccountOutputType = z.infer<typeof deleteMyAccountOutputModel>

@@ -36,7 +36,7 @@ class FormFieldService {
 
   // ✅ Create a new field
   public async createField(payload: CreateFieldInputType) {
-    const { label, type, formId, description, placeholder, isRequired } =
+    const { label, type, formId, description, placeholder, options, isRequired } =
       await createFieldInput.parseAsync(payload)
 
     // Validate required fields
@@ -56,6 +56,7 @@ class FormFieldService {
         formId, 
         description: description || null, 
         placeholder: placeholder || null, 
+         options: options ?? null,
         isRequired: isRequired ?? false,
         index
       })
@@ -82,6 +83,7 @@ class FormFieldService {
     if (updates.type) patch.type = updates.type
     if (updates.description !== undefined) patch.description = updates.description
     if (updates.placeholder !== undefined) patch.placeholder = updates.placeholder
+    if (updates.options !== undefined) patch.options = updates.options;
     if (updates.isRequired !== undefined) patch.isRequired = updates.isRequired
     if (updates.index !== undefined) patch.index = updates.index
 

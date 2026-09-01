@@ -12,6 +12,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
+import { Label } from "~/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -49,7 +50,9 @@ type FieldType =
   | "NUMBER"
   | "EMAIL"
   | "PASSWORD"
-  | "YES_NO";
+  | "YES_NO"
+  | "RATING"
+  | "OPTION";
 
 export default function FormBuilderPage() {
   const { id: formId } = useParams<{ id: string }>();
@@ -68,6 +71,9 @@ export default function FormBuilderPage() {
   const [description, setDescription] = useState("");
   const [placeholder, setPlaceholder] = useState("");
   const [isRequired, setIsRequired] = useState(false);
+  const [options, setOptions] = useState<string[]>(["Option 1",]);
+
+  const [ratings, setRatings] = useState<Record<string, number>>({});
 
   const resetForm = () => {
     setEditingField(null);
@@ -77,10 +83,16 @@ export default function FormBuilderPage() {
     setPlaceholder("");
     setIsRequired(false);
     setIsOpen(false);
+    setOptions([""]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanedOptions = options
+  .map(o => o.trim())
+  .filter(o => o !== "");
+
+  
 
     try {
       if (editingField) {
@@ -91,6 +103,7 @@ export default function FormBuilderPage() {
           description,
           placeholder,
           isRequired,
+          options: type === "OPTION" ? cleanedOptions : undefined,
         });
       } else {
         await createFieldAsync({
@@ -100,6 +113,7 @@ export default function FormBuilderPage() {
           description,
           placeholder,
           isRequired,
+          options: type === "OPTION" ? options : undefined,
         });
       }
 
@@ -118,6 +132,7 @@ export default function FormBuilderPage() {
     setPlaceholder(field.placeholder ?? "");
     setIsRequired(field.isRequired);
     setIsOpen(true);
+    setOptions(field.options ?? [""]);
   };
 
   const handleDelete = async (fieldId: string) => {
@@ -216,10 +231,25 @@ export default function FormBuilderPage() {
                   )}
 
                   {field.placeholder && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Placeholder: {field.placeholder}
-                    </p>
-                  )}
+  <p className="text-xs text-muted-foreground mt-1">
+    Placeholder: {field.placeholder}
+  </p>
+)}
+
+
+
+{field.type === "OPTION" && options.length > 0 && (
+  <div className="mt-2 space-y-1">
+    {options.map(option => (
+      <div key={option}>
+        • {option}
+      </div>
+    ))}
+  </div>
+)}
+
+
+                
 
                   <p className="text-xs text-muted-foreground mt-1">
                     Key: {field.labelKey}
@@ -288,9 +318,70 @@ export default function FormBuilderPage() {
                 <SelectItem value="EMAIL">Email</SelectItem>
                 <SelectItem value="PASSWORD">Password</SelectItem>
                 <SelectItem value="YES_NO">Yes / No</SelectItem>
+                <SelectItem value="OPTION">Multiple Choice</SelectItem>
                 <SelectItem value="RATING">Rating</SelectItem>
               </SelectContent>
             </Select>
+
+            {type === "OPTION" && (
+  <div className="space-y-3">
+
+    <Label>Options</Label>
+
+    {options.map((option, index) => (
+
+      <div
+        key={index}
+        className="flex gap-2"
+      >
+
+        <Input
+          value={option}
+          placeholder={`Option ${index + 1}`}
+          onChange={(e) => {
+
+            const updated = [...options];
+            updated[index] = e.target.value;
+            setOptions(updated);
+
+          }}
+        />
+
+        <Button
+          type="button"
+          variant="destructive"
+          onClick={() =>
+
+            setOptions(
+              options.filter((_, i) => i !== index)
+            )
+
+          }
+        >
+          ✕
+        </Button>
+
+      </div>
+
+    ))}
+
+    <Button
+      type="button"
+      variant="outline"
+      onClick={() =>
+
+        setOptions([
+          ...options,
+          "",
+        ])
+
+      }
+    >
+      + Add Option
+    </Button>
+
+  </div>
+)}
 
             <Textarea
               value={description}

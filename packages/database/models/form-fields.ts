@@ -7,12 +7,13 @@ import {
   text,
   numeric,
   pgEnum,
-  unique
+  unique,
+  json
 } from "drizzle-orm/pg-core";
-import { usersTable } from "./user";
+
 import { formsTable } from "./form";
 
-export const fieldTypeEnum = pgEnum('field_type_enum', ['TEXT', 'NUMBER', 'EMAIL', 'PASSWORD', 'YES_NO', 'RATING'])
+export const fieldTypeEnum = pgEnum('field_type_enum', ['TEXT', 'NUMBER', 'EMAIL', 'PASSWORD', 'YES_NO', 'RATING', 'OPTION'])
 
 export const formFieldsTable = pgTable("forms_fields", {
      id: uuid("id").primaryKey().defaultRandom(),     
@@ -22,6 +23,7 @@ export const formFieldsTable = pgTable("forms_fields", {
      label: varchar("label", { length: 100 }).notNull(),
      labelKey: varchar("label_key", { length: 100 }).notNull(),
      placeholder: text("placeholder"),
+     options: json("options").$type<string[]>(),
      isRequired: boolean("is_required").default(false).notNull(),
      description: text("description"),
 

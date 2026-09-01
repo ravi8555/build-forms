@@ -16,11 +16,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon, LogOut, Form, ChartNoAxesCombined   } from "lucide-react"
+import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon, LogOut, Form, ChartNoAxesCombined, CreditCardIcon, ShieldCheckIcon } from "lucide-react"
 
-import {useUser, useLogout  } from "~/hooks/api/auth"
+import { useLogout  } from "~/hooks/api/auth"
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation"
+
 
 
 
@@ -28,11 +29,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
 
   const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+  // user: {
+  //   name: "shadcn",
+  //   email: "m@example.com",
+  //   avatar: "/avatars/shadcn.jpg",
+  // },
   navMain: [
     {
       title: "Dashboard",
@@ -62,6 +63,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         />
       ),
       isActive: pathname === "/dashboard/analytics",
+    },
+    {
+      title: "Billing",
+      url: "/dashboard/billing",
+      icon: (
+        <CreditCardIcon
+        />
+      ),
+      isActive: pathname === "/dashboard/billing",
+    },
+    {
+      title: "Privacy & Data",
+      url: "/dashboard/privacy",
+      icon: (
+        <ShieldCheckIcon
+        />
+      ),
+      isActive: pathname === "/dashboard/privacy",
     },
    
   ],
@@ -149,14 +168,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 const { logoutAsync } = useLogout()
 const router = useRouter()
 
+
 const handleLogout = async () => {
   try {
-    await logoutAsync()
+    await logoutAsync();
     router.replace("/auth")
+  // setTimeout(async () => {
+  // }, 0);
+   
   } catch (error) {
     console.error(error)
   }
 }
+
+
+
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -181,9 +208,9 @@ const handleLogout = async () => {
         </SidebarMenuButton>
             
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <NavUser user={data.user} />
-      </SidebarFooter>
+      </SidebarFooter> */}
     </Sidebar>
   )
 }

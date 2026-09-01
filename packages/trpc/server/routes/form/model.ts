@@ -15,6 +15,7 @@ export const createFormInputModel = z.object({
         label: z.string().max(100),
         labelKey: z.string().max(100),
         placeholder: z.string().optional(),
+        options: z.array(z.string()).optional(),
         isRequired: z.boolean().default(false),
         description: z.string().optional(),
         index: z.string(), // numeric in DB often handled as string in JS
@@ -69,7 +70,7 @@ export const dashboardAnalyticsOutputModel = z.object({
 });
 
 // Enum for field types
-export const fieldTypeEnum = z.enum(["TEXT", "NUMBER", "EMAIL", "YES_NO", "PASSWORD","RATING"])
+export const fieldTypeEnum = z.enum(["TEXT", "NUMBER", "EMAIL", "YES_NO", "PASSWORD","RATING","OPTION"])
 
 // Base field object
 export const formFieldObject = z.object({
@@ -79,6 +80,7 @@ export const formFieldObject = z.object({
   type: fieldTypeEnum,
   description: z.string().nullable().optional(),
   placeholder: z.string().nullable().optional(),
+  options: z.array(z.string()).nullable().optional(),
   isRequired: z.boolean(),
   index: z.string().describe("Fractional index for ordering"),
 })
@@ -90,6 +92,7 @@ export const createFieldInputModel = z.object({
   type: fieldTypeEnum.describe("Type of the field"),
   description: z.string().optional(),
   placeholder: z.string().optional(),
+  options: z.array(z.string()).optional().describe("Choose multiple options"),
   isRequired: z.boolean().optional().default(false),
 })
 
@@ -111,6 +114,7 @@ export const updateFieldInputModel = z.object({
   type: fieldTypeEnum.optional().describe("Updated field type"),
   description: z.string().optional().nullable().describe("Updated helper text"),
   placeholder: z.string().optional().nullable().describe("Updated placeholder text"),
+  options: z.array(z.string()).optional().describe("Choose multiple options"),
   isRequired: z.boolean().optional().describe("Updated required flag"),
   index: z.string().optional().describe("Updated fractional index"),
 })
@@ -136,9 +140,11 @@ export const getFieldOutputModel = z.object({
   formId: z.string().uuid().nullable(),
   label: z.string(), 
   labelKey: z.string(),
-  type: z.enum(["TEXT", "NUMBER", "EMAIL", "PASSWORD", "YES_NO","RATING"]),
+  // type: z.enum(["TEXT", "NUMBER", "EMAIL", "PASSWORD", "YES_NO","RATING"]),
+  type: fieldTypeEnum,
   description: z.string().nullable().optional(),
   placeholder: z.string().nullable().optional(),
+  options: z.array(z.string()).nullable().optional(),
   isRequired: z.boolean(),
   index: z.string(),
   createdAt: z.date().nullable(),
@@ -157,6 +163,7 @@ export const getFormOutputModel = z.object({
   id: z.string(),
   title: z.string().nullable(),
   description: z.string().nullable().optional(),
+  // options: z.array(z.string()).nullable().optional(),
   theme: z.string().nullable(),
   createdAt: z.date().nullable(),
   updatedAt: z.date().nullable(),
