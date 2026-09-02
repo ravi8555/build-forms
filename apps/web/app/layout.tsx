@@ -8,7 +8,7 @@ import { TooltipProvider } from "~/components/ui/tooltip"
 import { ThemeProvider } from "next-themes"
 import { AuthProvider } from "./AuthProvider"
 import { CookieConsent } from "~/components/CookieConsent"
-
+import { headers } from "next/headers"
 
 const geist = Geist({
   subsets: ["latin"],
@@ -41,15 +41,27 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   
 // const { enqueueSnackbar } = useSnackbar();
+
+  // The per-request nonce is generated in proxy.ts and forwarded here via a
+  // request header. Reading `headers()` also opts every route into dynamic
+  // rendering, which is required for a nonce-based CSP: statically
+  // prerendered HTML cannot carry a per-request nonce.
+  const nonce = (await headers()).get("x-nonce")
+
   return (
-    <html lang="en" suppressHydrationWarning className={cn("dark", "font-sans", geist.variable)}>
+    <html
+      lang="en"
+      nonce={nonce ?? undefined}
+      suppressHydrationWarning
+      className={cn("dark", "font-sans", geist.variable)}
+    >
       <body className={`${geistSans.variable} ${geistMono.variable}, body-bg`}>
          <ThemeProvider
     attribute="class"

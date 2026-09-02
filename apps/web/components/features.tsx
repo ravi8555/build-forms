@@ -110,13 +110,13 @@ const FormFeatures = () => {
                 w-14
                 items-center
                 justify-center
-                rounded-md
+                rounded-md 
                 border brd-1
-                bg-[#0b1d3a]
+                bgdarklight
               "
             >
               <Icon
-                className="text-[#ca9f00]"
+                className="text-[#ffffff]"
                 size={28}
               />
             </div>

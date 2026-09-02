@@ -54,7 +54,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { LoadingSpinner } from "~/components/LoadingSpinner";
 import { useUser } from "~/hooks/api/auth";
 
@@ -65,15 +65,23 @@ export default function GuestRoute({
 }) {
 
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // ✅ Hook inside component
   const { user, isLoading } = useUser(true);
 
   useEffect(() => {
     if (!isLoading && user) {
-      router.replace("/dashboard");
+      // Users coming from the pricing page carry `?plan=pro|enterprise`;
+      // route them to the payment page instead of the plain dashboard.
+      const plan = searchParams.get("plan");
+      if (plan === "pro" || plan === "enterprise") {
+        router.replace(`/dashboard/billing?plan=${plan}`);
+      } else {
+        router.replace("/dashboard");
+      }
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, router, searchParams]);
 
   if (isLoading) {
     return <LoadingSpinner />;

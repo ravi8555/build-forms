@@ -94,6 +94,7 @@
   /* --brd-color:background-color: transparent;border: 1px solid #ffa566;color: #FF6900; */
   --label-font-color:#999999;
   --cardbx: #ffffff;
+  --bg-darklight:#ffa566
 
 }
   /* --brd-color: */
@@ -141,6 +142,7 @@
   --card-orange-border:1px solid #001438;
   --label-font-color:#CCCCCC ;
   --cardbx: #1a2c4c;
+  --bg-darklight:#0b1d3a
    
   
 }
@@ -234,3 +236,6 @@ li[data-sidebar="menu-button"]{
 .orangeBg{background-color: #ffa566;}
 .greenBg{background-color:var(--title-font-color);}
 .label-font-color{color: var(--label-font-color);}
+.bgdarklight{
+  background-color: var(--bg-darklight);
+}

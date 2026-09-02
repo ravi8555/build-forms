@@ -1,4 +1,5 @@
 import ProtectedRoute from "~/app/ProtectedRoute"
+import { UpgradeBanner } from "~/components/billing/upgrade-banner"
 import { AppSidebar } from "~/components/app-sidebar"
 import { SiteHeader } from "~/components/site-header"
 import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar"
@@ -43,6 +44,8 @@ export default function DashboardLayout({
 />
         <div className="flex flex-1 flex-col mt-5">
           <div className="@container/main flex flex-1 flex-col gap-2">
+           {/* Usage-limit notification (hidden on the billing page itself) */}
+           <UpgradeBanner />
            {/* <AuthProvider> */}
            <ProtectedRoute>          
             {children}

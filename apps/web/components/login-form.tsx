@@ -18,7 +18,7 @@ import {
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSignIn } from "~/hooks/api/auth";
 import { trpc } from "~/trpc/client";
 import Link from "next/link";
@@ -39,6 +39,7 @@ export function LoginForm({
   ...props
 }: LoginFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const { signInwithEmailAndPasswordAsync } = useSignIn();
 
@@ -64,7 +65,15 @@ export function LoginForm({
         password: data.password,
       });
 
-      router.replace("/dashboard");
+      // Honor the `?plan=` parameter (set by the pricing page "Upgrade"
+      // buttons): send the user to the payment page instead of the plain
+      // dashboard so they can complete the subscription checkout.
+      const plan = searchParams.get("plan");
+      router.replace(
+        plan === "pro" || plan === "enterprise"
+          ? `/dashboard/billing?plan=${plan}`
+          : "/dashboard"
+      );
     } catch (error: any) {
       if (error.message.includes("EMAIL_NOT_VERIFIED")) {
         setLoginEmail(data.email);

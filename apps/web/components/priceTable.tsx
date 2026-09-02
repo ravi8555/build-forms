@@ -1,18 +1,100 @@
 "use client";
 
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { Rocket, Crown, Building, Check } from "lucide-react";
 import Link from "next/link";
-import { platform } from "os";
 
-export const Pricing: React.FC = () => {
+import { useSubscription } from "~/hooks/api/billing";
+
+type PricingProps = {
+  /**
+   * Whether the visitor has a session cookie. The pricing page (server
+   * component) reads the httpOnly cookie's presence and passes it down.
+   * Defaults to false (e.g. the landing page) — logged-in users there are
+   * still routed correctly by proxy.ts via the `?plan=` parameter.
+   */
+  isLoggedIn?: boolean;
+};
+
+type PlanKey = "free" | "pro" | "enterprise";
+
+type PlanCta = {
+  label: string;
+  href?: string;
+  disabled?: boolean;
+};
+
+/** Renders one plan CTA: a link, or a disabled "Current Plan" button. */
+function PlanButton({ cta }: { cta: PlanCta }) {
+  if (cta.disabled) {
+    return (
+      <button
+        type="button"
+        disabled
+        className="w-full py-2 rounded-md title-font-color border brd pl-5 pr-5 opacity-60 cursor-not-allowed"
+      >
+        {cta.label}
+      </button>
+    );
+  }
+
+  return (
+    <Link
+      href={cta.href ?? "#"}
+      className="w-full py-2 rounded-md title-font-color border brd pl-5 pr-5 cursor-pointer"
+    >
+      {cta.label}
+    </Link>
+  );
+}
+
+export const Pricing: React.FC<PricingProps> = ({ isLoggedIn = false }) => {
   const [yearly, setYearly] = useState(false);
 
+  // Only fires for logged-in visitors (never for guests, so no 401s).
+  const { subscription } = useSubscription(isLoggedIn);
 
-  const plans = [
+  const proActive =
+    subscription?.plan === "pro" && subscription?.status === "active";
+
+  const getPlanCta = (key: PlanKey, defaultLabel: string): PlanCta => {
+    if (key === "free") {
+      return isLoggedIn
+        ? { label: "Go to Dashboard", href: "/dashboard" }
+        : { label: defaultLabel, href: "/auth" };
+    }
+
+    if (!isLoggedIn) {
+      // Guest: authenticate first. proxy.ts and login-form carry the
+      // `?plan=` parameter through so the user lands on the payment page
+      // (/dashboard/billing) right after signing in.
+      return { label: defaultLabel, href: `/auth?plan=${key}` };
+    }
+
+    if (proActive) {
+      return { label: "Current Plan ✓", disabled: true };
+    }
+
+    // Logged in and not subscribed: go straight to the payment page.
+    return { label: defaultLabel, href: `/dashboard/billing?plan=${key}` };
+  };
+
+
+  const plans: Array<{
+    name: string;
+    month: number;
+    year: number;
+    sub: string;
+    color: string;
+    features: string[];
+    button: string;
+    icon: React.ReactNode;
+    featured?: boolean;
+    key: PlanKey;
+  }> = [
     {
       name: "Starter",
-      
+
       month: 0,
       year: 0,
       sub: "Free forever",
@@ -27,8 +109,7 @@ export const Pricing: React.FC = () => {
       ],
       button: "Get Started",
       icon: <Rocket className="w-6 h-6 text-green-400" />,
-      navTo:"/auth",
-      plan:"free"
+      key: "free",
     },
     {
       name: "Professional",
@@ -50,9 +131,7 @@ export const Pricing: React.FC = () => {
       button: "Upgrade Now",
       featured: true,
       icon: <Crown className="w-6 h-6 text-yellow-400" />,
-      navTo: "/auth?plan=pro",
-      plan:"pro",
-      
+      key: "pro",
     },
     {
       name: "Enterprise",
@@ -73,8 +152,7 @@ export const Pricing: React.FC = () => {
       ],
       button: "Contact Sales",
       icon: <Building className="w-6 h-6 text-purple-400" />,
-      navTo: "/auth?plan=enterprise",
-      plan:"enterprise"
+      key: "enterprise",
     },
   ];
  
@@ -114,7 +192,7 @@ export const Pricing: React.FC = () => {
             {plan.featured && (
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-500 text-black px-4 py-1 rounded-full flex items-center gap-2 font-bold" style={{fontSize:"10px"}}>
                 <Crown className="w-4 h-4" />
-                MOST POPULAR"
+                MOST POPULAR
               </div>
             )}
 
@@ -149,12 +227,7 @@ export const Pricing: React.FC = () => {
             </ul>
 
             {/* Button */}
-            
-              <Link href={plan.navTo} className="w-full py-2 rounded-md title-font-color border brd pl-5 pr-5 cursor-pointer">
-              {plan.button}
-              
-              </Link>
-            
+            <PlanButton cta={getPlanCta(plan.key, plan.button)} />
           </div>
         ))}
       </div>
